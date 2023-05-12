@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Soldier : Enemy
+public class Chaser : Enemy
 {
     #region Variables
 
     #endregion
 
-    #region Public Methods
+    #region Override Methods
 
     /// <summary>
     /// Changes and properly transitions all soldier states
@@ -19,37 +19,57 @@ public class Soldier : Enemy
     {
         base.ChangeState(newState);
 
+        // Resets (clears out) the path of the navmesh for every change
+        if (_agent != null)
+        {
+            _agent.ResetPath();
+        }
+
         switch (newState)
         {
             case EnemyStates.Far:
+
+                if (_agent != null)
+                {
+                    _agent.SetDestination(_playerRef.position);
+                }
+
                 break;
+
             case EnemyStates.Close:
                 break;
+
             case EnemyStates.Stunned:
                 break;
         }
     }
 
-    #endregion
-
-    #region Private Methods
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     protected override void Start()
     {
         base.Start();
     }
 
-    protected void Update()
+    protected override void Update()
     {
+        base.Update();
+
         if (_playerRef)
         {
             switch (_state)
             {
                 case EnemyStates.Far:
 
-                    // Initial movement setting (PICK UP FROM HERE)
-                    _agent.SetDestination(_playerRef.position);
-
+                    // Soldiers chase the player when out of attack proximity
+                    if (_agent != null)
+                    {
+                        _agent.SetDestination(_playerRef.position);
+                    }
+                    
                     break;
                 case EnemyStates.Close:
                     break;
