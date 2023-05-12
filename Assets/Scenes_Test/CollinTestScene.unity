@@ -414,12 +414,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 862159133}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1438714122 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3842845403807313504, guid: 0794d216ae0bedf40a4b403f40dfc4c9,
-    type: 3}
-  m_PrefabInstance: {fileID: 4799748414978674563}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1456074414
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,51 +669,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2854964789315208313, guid: 5147b79648ad52a4fbbd46a89611a5d0,
-        type: 3}
-      propertyPath: field of view
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2854964789315208313, guid: 5147b79648ad52a4fbbd46a89611a5d0,
-        type: 3}
-      propertyPath: m_FOVAxisMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2854964789401883600, guid: 5147b79648ad52a4fbbd46a89611a5d0,
-        type: 3}
-      propertyPath: m_TagString
-      value: MainCamera
-      objectReference: {fileID: 0}
-    - target: {fileID: 2854964789401883605, guid: 5147b79648ad52a4fbbd46a89611a5d0,
-        type: 3}
-      propertyPath: m_Follow
-      value: 
-      objectReference: {fileID: 1438714122}
-    - target: {fileID: 2854964789401883605, guid: 5147b79648ad52a4fbbd46a89611a5d0,
-        type: 3}
-      propertyPath: m_Lens.FieldOfView
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2854964789998321242, guid: 5147b79648ad52a4fbbd46a89611a5d0,
-        type: 3}
-      propertyPath: m_VerticalAxis.m_MaxSpeed
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 2854964789998321242, guid: 5147b79648ad52a4fbbd46a89611a5d0,
-        type: 3}
-      propertyPath: m_VerticalAxis.m_MaxValue
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 2854964789998321242, guid: 5147b79648ad52a4fbbd46a89611a5d0,
-        type: 3}
-      propertyPath: m_VerticalAxis.m_MinValue
-      value: -50
-      objectReference: {fileID: 0}
-    - target: {fileID: 2854964789998321242, guid: 5147b79648ad52a4fbbd46a89611a5d0,
-        type: 3}
-      propertyPath: m_HorizontalAxis.m_MaxSpeed
-      value: 0.35
-      objectReference: {fileID: 0}
     - target: {fileID: 2854964790191980578, guid: 5147b79648ad52a4fbbd46a89611a5d0,
         type: 3}
       propertyPath: m_RootOrder
