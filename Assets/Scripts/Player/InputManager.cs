@@ -44,4 +44,9 @@ public class InputManager : MonoBehaviour
     {
         return input.Player.Jump.triggered;
     }
+
+    public float PlayerIsSprinting()
+    {
+        return input.Player.Sprint.ReadValue<float>();
+    }
 }

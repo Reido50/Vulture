@@ -12,12 +12,21 @@ public class PlayerController : MonoBehaviour
     private InputManager input;
     private Transform cameraTransform;
 
+    [Header("Player movement values")]
     [Tooltip("The default move speed of the player")]
-    [SerializeField] private float playerSpeed = 2.0f;
+    [SerializeField] private float walkSpeed = 4.0f;
+    [Tooltip("The sprint move speed of the player")]
+    [SerializeField] private float sprintSpeed = 8.0f;
     [Tooltip("The default jump height for the player")]
     [SerializeField] private float jumpHeight = 1.0f;
     [Tooltip("The default gravity value")]
     [SerializeField] private float gravityValue = -9.81f;
+
+    [Header("Settings values")]
+    [Tooltip("Settings toggle for sprint being held / being a toggle -- false = hold sprint, true = toggle sprint")]
+    public bool toggleSprint = false;
+    [Tooltip("Settings toggle for crouch being held / being a toggle -- false = hold crouch, true = toggle crouch")]
+    public bool toggleCrouch = false;
 
     private void Start()
     {
@@ -32,6 +41,12 @@ public class PlayerController : MonoBehaviour
         if (groundedPlayer && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
+        }
+
+        float playerSpeed = walkSpeed;
+        if(SprintCheck())
+        {
+            playerSpeed = sprintSpeed;
         }
 
         Vector2 movement = input.GetPlayerMovement();
@@ -49,5 +64,17 @@ public class PlayerController : MonoBehaviour
 
         playerVelocity.y += gravityValue * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
+    }
+
+    private bool SprintCheck()
+    {
+        bool canSprint = true;
+        if(input.PlayerIsSprinting() == 0)
+        {
+            canSprint = false;
+        }
+
+        Debug.Log(input.PlayerIsSprinting());
+        return canSprint;
     }
 }
