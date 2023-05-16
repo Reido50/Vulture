@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
         Stunned
     }
 
-    [Header("Debug")]
+    [Header("Detection Debug")]
 
     [Tooltip("The current state of the enemy")]
     [SerializeField] protected EnemyStates _state;
