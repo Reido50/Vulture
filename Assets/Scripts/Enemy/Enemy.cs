@@ -16,13 +16,13 @@ public class Enemy : MonoBehaviour
 
     [Header("Debug")]
 
+    [Tooltip("The current state of the enemy")]
+    [SerializeField] protected EnemyStates _state;
+
     [Tooltip("Is the player in sight?")]
     [SerializeField] protected bool _playerInSight = false;
 
     [Header("Detection")]
-
-    [Tooltip("The current state of the enemy")]
-    [SerializeField] protected EnemyStates _state;
 
     [Tooltip("The distance from the player to trigger an attack state")]
     [SerializeField] protected float _inRangeProximity = 8f;
