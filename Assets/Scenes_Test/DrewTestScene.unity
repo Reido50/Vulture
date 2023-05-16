@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.22571328, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -137,8 +137,9 @@ GameObject:
   - component: {fileID: 117302387}
   - component: {fileID: 117302392}
   - component: {fileID: 117302393}
-  m_Layer: 0
-  m_Name: Chaser
+  - component: {fileID: 117302394}
+  m_Layer: 7
+  m_Name: Soldier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -234,10 +235,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5000001
-  m_Speed: 2.5
-  m_Acceleration: 8
+  m_Speed: 3
+  m_Acceleration: 10
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 360
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -258,8 +259,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ac8fe17bd846334a903bf97010b36fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerInSight: 0
   _state: 0
-  _attackProximity: 8
+  _inRangeProximity: 8
+  _sightDistance: 30
+  _sightMask:
+    serializedVersion: 2
+    m_Bits: 951
+  _slowWhenPlayerSpotted: 1
+  speedReductionPercentage: 0.5
+  _shootWhileMoving: 1
+--- !u!114 &117302394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117302386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd570b80b40860a4f969252a81ee06ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _bulletPrefab: {fileID: 4978727838991092556, guid: a0ef9cbaddbfdfd438d59bd2126d03d6,
+    type: 3}
+  _bulletSpeed: 20
+  _bulletDelay: 1
+  _bulletOffset: 1
+  _aimPercentage: 0.3
+  _maxMissDistance: 0.3
 --- !u!1 &124032322
 GameObject:
   m_ObjectHideFlags: 0
@@ -703,7 +731,7 @@ GameObject:
   - component: {fileID: 680045099}
   - component: {fileID: 680045098}
   - component: {fileID: 680045097}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Front
   m_TagString: Untagged
   m_Icon: {fileID: 0}

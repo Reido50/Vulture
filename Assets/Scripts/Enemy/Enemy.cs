@@ -9,18 +9,38 @@ public class Enemy : MonoBehaviour
 
     public enum EnemyStates
     {
-        Far,
-        Close,
+        OutOfRange,
+        InRange,
         Stunned
     }
 
-    [Header("Enemy Values")]
+    [Header("Debug")]
+
+    [Tooltip("Is the player in sight?")]
+    [SerializeField] protected bool _playerInSight = false;
+
+    [Header("Detection")]
 
     [Tooltip("The current state of the enemy")]
     [SerializeField] protected EnemyStates _state;
 
     [Tooltip("The distance from the player to trigger an attack state")]
-    [SerializeField] protected float _attackProximity = 8f;
+    [SerializeField] protected float _inRangeProximity = 8f;
+
+    [Tooltip("The distance in which the enemy can 'see' the player")]
+    [SerializeField] protected float _sightDistance = 30f;
+
+    [Tooltip("The layers that will be allowed in the player detection raycast")]
+    [SerializeField] protected LayerMask _sightMask;
+
+    [Header("Movement")]
+
+    [Tooltip("Should the enemy slow down once the player is spotted?")]
+    [SerializeField] protected bool _slowWhenPlayerSpotted = true;
+
+    [Tooltip("If slowed, this value will be the speed reduction")]
+    [Range(0, 1)]
+    [SerializeField] protected float speedReductionPercentage = 0.5f;
 
     // Reference to the player GameObject
     protected Transform _playerRef;
@@ -28,9 +48,18 @@ public class Enemy : MonoBehaviour
     // Reference to the NavMesh Agent
     protected NavMeshAgent _agent;
 
+    // Reference to this enemies weapon script
+    protected EnemyWeapon _weapon;
+
+    // Reference to the base speed of the enemy
+    protected float _baseSpeed = 0;
+
+    // Reference to the current speed of the enemy
+    protected float _currentSpeed = 0;
+
     #endregion
 
-    #region Public Methods
+    #region Methods
 
     /// <summary>
     /// Changes and properly transitions all enemy states
@@ -40,15 +69,25 @@ public class Enemy : MonoBehaviour
     {
         _state = newState;
     }
-    #endregion
-
-    #region Protected Methods
 
     protected virtual void Awake()
     {
         // Initial reference grabbing
-        _state = EnemyStates.Far;
+        _state = EnemyStates.OutOfRange;
         _agent = GetComponent<NavMeshAgent>();
+        _weapon = GetComponent<EnemyWeapon>();
+
+        _baseSpeed = _agent.speed;
+
+        if (!_agent)
+        {
+            Debug.LogWarning($"Enemy {this.transform.name} is missing a NavMeshAgent component!");
+        }
+
+        if (!_weapon)
+        {
+            Debug.LogWarning($"Enemy {this.transform.name} is missing a weapon component!");
+        }
     }
 
     protected virtual void Start()
@@ -66,15 +105,47 @@ public class Enemy : MonoBehaviour
         {
             switch (_state)
             {
-                case EnemyStates.Far:
+                case EnemyStates.OutOfRange:
                     CheckProximity();
                     break;
-                case EnemyStates.Close:
+                case EnemyStates.InRange:
                     CheckProximity();
+
+                    if (!_playerInSight)
+                    {
+                        ChangeState(EnemyStates.OutOfRange);
+                    }
+
                     break;
                 case EnemyStates.Stunned:
                     break;
             }
+
+            // Checks for player raycast
+            if (!_playerInSight)
+            {
+                if (CheckSightline())
+                {
+                    TogglePlayerSightline(true);
+                }
+            }
+            else
+            {
+                if (!CheckSightline())
+                {
+                    TogglePlayerSightline(false);
+                }
+            }
+        }
+    }
+
+    protected virtual void TogglePlayerSightline(bool playerSpotted)
+    {
+        _playerInSight = playerSpotted;
+        
+        if (_slowWhenPlayerSpotted)
+        {
+            _agent.speed = !playerSpotted ? _baseSpeed : (_baseSpeed - (_baseSpeed * speedReductionPercentage));
         }
     }
 
@@ -85,22 +156,39 @@ public class Enemy : MonoBehaviour
     {
         switch(_state)
         {
-            case EnemyStates.Far:
+            case EnemyStates.OutOfRange:
 
-                if (Vector3.Distance(transform.position, _playerRef.position) <= _attackProximity)
+                if (Vector3.Distance(transform.position, _playerRef.position) <= _inRangeProximity && _playerInSight)
                 {
-                    ChangeState(EnemyStates.Close);
+                    ChangeState(EnemyStates.InRange);
                 }
                 return;
 
-            case EnemyStates.Close:
+            case EnemyStates.InRange:
 
-                if (Vector3.Distance(transform.position, _playerRef.position) > _attackProximity)
+                if (Vector3.Distance(transform.position, _playerRef.position) > _inRangeProximity)
                 {
-                    ChangeState(EnemyStates.Far);
+                    ChangeState(EnemyStates.OutOfRange);
                 }
                 return;
         }
+    }
+
+    protected virtual bool CheckSightline()
+    {
+        RaycastHit hit;
+        Vector3 dir = _playerRef.position - this.transform.position;
+
+        // Simple raycast
+        if (Physics.Raycast(transform.position, dir, out hit, _sightDistance, _sightMask))
+        {
+            if (hit.transform.CompareTag("Player"))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     #endregion

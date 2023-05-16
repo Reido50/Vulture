@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5089813486299512033}
   - component: {fileID: 5115269764422211622}
   - component: {fileID: 7308366941523827131}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PlayerCam
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 8867807116091637665}
   - component: {fileID: 6328804235596341869}
   - component: {fileID: 5072301102242561568}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,7 +218,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 998224703563147516}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -254,7 +254,7 @@ GameObject:
   - component: {fileID: 3670090067135308278}
   - component: {fileID: 2482600934367055611}
   - component: {fileID: 4040171988006490209}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -349,7 +349,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3842845403807313504}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FollowTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -383,7 +383,7 @@ GameObject:
   - component: {fileID: 5116147193994780576}
   - component: {fileID: 2974332667232916286}
   - component: {fileID: 1860415873}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -419,10 +419,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f136930f31e7dd43b2af998dc39954c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpeed: 4
+  walkSpeed: 4
   sprintSpeed: 8
   jumpHeight: 1
   gravityValue: -9.81
+  toggleSprint: 0
+  toggleCrouch: 0
 --- !u!114 &2974332667232916286
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Chaser : Enemy
+public class Soldier : Enemy
 {
     #region Variables
+
+    [Header("Behavior")]
+
+    [Tooltip("Should this enemy shoot while moving?")]
+    [SerializeField] private bool _shootWhileMoving = true;
 
     #endregion
 
@@ -27,16 +32,24 @@ public class Chaser : Enemy
 
         switch (newState)
         {
-            case EnemyStates.Far:
+            case EnemyStates.OutOfRange:
 
-                if (_agent != null)
+                // Initial following of the player
+                if (_agent)
                 {
                     _agent.SetDestination(_playerRef.position);
                 }
 
                 break;
 
-            case EnemyStates.Close:
+            case EnemyStates.InRange:
+
+                // Turn firing back on if we weren't shooting while moving
+                if (_weapon && !_shootWhileMoving && _playerInSight)
+                {
+                    _weapon.ToggleFiring(true);
+                }
+
                 break;
 
             case EnemyStates.Stunned:
@@ -62,7 +75,7 @@ public class Chaser : Enemy
         {
             switch (_state)
             {
-                case EnemyStates.Far:
+                case EnemyStates.OutOfRange:
 
                     // Soldiers chase the player when out of attack proximity
                     if (_agent != null)
@@ -71,12 +84,33 @@ public class Chaser : Enemy
                     }
                     
                     break;
-                case EnemyStates.Close:
+                case EnemyStates.InRange:
+
+                    transform.LookAt(_playerRef.position);
+
                     break;
                 case EnemyStates.Stunned:
                     break;
             }
         }
+    }
+
+    /// <summary>
+    /// Sets firing on and off based on if player is in raycast
+    /// </summary>
+    /// <param name="playerSpotted">Is the player spotted?</param>
+    protected override void TogglePlayerSightline(bool playerSpotted)
+    {
+        base.TogglePlayerSightline(playerSpotted);
+
+        // If moving and we don't want to shoot, turn firing off!
+        if (_state == EnemyStates.OutOfRange && !_shootWhileMoving)
+        {
+            _weapon.ToggleFiring(false);
+            return;
+        }
+
+        _weapon.ToggleFiring(playerSpotted);
     }
 
     #endregion

@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    #region Methods
+
     private void Awake()
     {
         if (_instance == null)
@@ -42,4 +44,6 @@ public class GameManager : MonoBehaviour
     {
         return _playerTransform;
     }
+
+    #endregion
 }
