@@ -143,7 +143,7 @@ public class Soldier : Enemy
                         return;
                     }
 
-                    _target = _currentRoom.QueryCover(_playerRef, _sightMask);
+                    _target = _currentRoom.QueryCover(_playerRef, this.transform, _sightMask);
 
                     if (_target == null)
                     {
@@ -407,7 +407,7 @@ public class Soldier : Enemy
         if (_actionTimer > _actionLimit)
         {
             _actionTimer = 0;
-            ChangeAction((InRangeActions)Random.Range(0, 5));
+            ChangeAction((InRangeActions)Random.Range(0, 4));
         }
 
         // Constant behavior for every action

@@ -43,15 +43,20 @@ public class Room : MonoBehaviour
         return _roomID;
     }
 
+
     /// <summary>
     /// Given a player, returns a cover point that the player cannot currently see
     /// </summary>
     /// <param name="player">Reference to the player transform</param>
     /// <param name="playerMask">A layermask for cover raycast detection</param>
     /// <returns>A transform of the appropriate cover</returns>
-    public Transform QueryCover(Transform player, LayerMask playerMask)
+    public Transform QueryCover(Transform player, Transform enemy, LayerMask playerMask)
     {
-        for (int i = 0; i < _coverTransforms.Count; i++)
+        // Sort transforms by distance to enemy
+        List<Transform> temp = new List<Transform>(_coverTransforms);
+        temp.Sort((p1, p2) => Vector3.Distance(p1.position, enemy.position).CompareTo(Vector3.Distance(p2.position, enemy.position)));
+
+        for (int i = 0; i < temp.Count; i++)
         {
             // If the cover is already being used, continue
             if (_coverRecords[i] == 1)
@@ -60,11 +65,11 @@ public class Room : MonoBehaviour
             }
 
             RaycastHit hit;
-            Vector3 dir = player.position - _coverTransforms[i].position;
+            Vector3 dir = player.position - temp[i].position;
 
-            Debug.DrawRay(_coverTransforms[i].position, dir * 100, Color.green);
+            Debug.DrawRay(temp[i].position, dir * 100, Color.green);
 
-            if (Physics.Raycast(_coverTransforms[i].position, dir, out hit, 100, playerMask))
+            if (Physics.Raycast(temp[i].position, dir, out hit, 100, playerMask))
             {
                 // If the cover can "see" the player, don't use it!
                 if (hit.transform.CompareTag("Player"))
@@ -75,7 +80,7 @@ public class Room : MonoBehaviour
 
             // Player can't see the cover!
             _coverRecords[i] = 1;
-            return _coverTransforms[i];
+            return temp[i];
         }
 
         // Will only return null if there are no valid covers
