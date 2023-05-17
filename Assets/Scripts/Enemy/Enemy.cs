@@ -11,7 +11,8 @@ public class Enemy : MonoBehaviour
     {
         OutOfRange,
         InRange,
-        Stunned
+        Stunned,
+        Covering
     }
 
     [Header("Detection Debug")]
@@ -40,7 +41,12 @@ public class Enemy : MonoBehaviour
 
     [Tooltip("If slowed, this value will be the speed reduction")]
     [Range(0, 1)]
-    [SerializeField] protected float speedReductionPercentage = 0.5f;
+    [SerializeField] protected float _speedReductionPercentage = 0.5f;
+
+    [Header("Room")]
+
+    [Tooltip("The layermask for room detection")]
+    [SerializeField] protected LayerMask _roomMask;
 
     // Reference to the player GameObject
     protected Transform _playerRef;
@@ -51,11 +57,17 @@ public class Enemy : MonoBehaviour
     // Reference to this enemies weapon script
     protected EnemyWeapon _weapon;
 
+    // Reference to the room this enemy is within
+    public Room _currentRoom;
+
     // Reference to the base speed of the enemy
     protected float _baseSpeed = 0;
 
     // Reference to the current speed of the enemy
     protected float _currentSpeed = 0;
+
+    // Is this enemy currently mutable in terms of speed/actions?
+    protected bool _mutable = true;
 
     #endregion
 
@@ -68,6 +80,22 @@ public class Enemy : MonoBehaviour
     protected virtual void ChangeState(EnemyStates newState)
     {
         _state = newState;
+
+        switch (newState)
+        {
+            case EnemyStates.OutOfRange:
+                _mutable = true;
+                break;
+            case EnemyStates.InRange:
+                _mutable = true;
+                break;
+            case EnemyStates.Stunned:
+                _mutable = false;
+                break;
+            case EnemyStates.Covering:
+                _mutable = false;
+                break;
+        }
     }
 
     protected virtual void Awake()
@@ -119,6 +147,8 @@ public class Enemy : MonoBehaviour
                     break;
                 case EnemyStates.Stunned:
                     break;
+                case EnemyStates.Covering:
+                    break;
             }
 
             // Checks for player raycast
@@ -139,13 +169,17 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Toggles on and off whether a player can be seen
+    /// </summary>
+    /// <param name="playerSpotted">Is the player currently spotted?</param>
     protected virtual void TogglePlayerSightline(bool playerSpotted)
     {
         _playerInSight = playerSpotted;
         
-        if (_slowWhenPlayerSpotted)
+        if (_slowWhenPlayerSpotted && _mutable)
         {
-            _agent.speed = !playerSpotted ? _baseSpeed : (_baseSpeed - (_baseSpeed * speedReductionPercentage));
+            _agent.speed = !playerSpotted ? _baseSpeed : (_baseSpeed - (_baseSpeed * _speedReductionPercentage));
         }
     }
 
@@ -174,6 +208,10 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks raycast visiblity to player and returns results
+    /// </summary>
+    /// <returns>True if player is visible, else false</returns>
     protected virtual bool CheckSightline()
     {
         RaycastHit hit;
@@ -189,6 +227,18 @@ public class Enemy : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Room"))
+        {
+            // If the enemy doesn't have a current room OR the found room is different, set as new room
+            if (_currentRoom == null || other.GetComponent<Room>().GetRoomID() != _currentRoom.GetRoomID())
+            {
+                _currentRoom = other.GetComponent<Room>();
+            }
+        }
     }
 
     #endregion

@@ -80,7 +80,6 @@ public class EnemyWeapon : MonoBehaviour
         {
             // Instaniate the bullet and set as child
             GameObject newBullet = Instantiate(_bulletPrefab, transform.position + transform.forward * _bulletOffset, Quaternion.identity);
-            newBullet.transform.parent = this.transform;
 
             // Set bullet layer
             if (newBullet.GetComponent<Bullet>())

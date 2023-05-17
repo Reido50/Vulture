@@ -144,16 +144,21 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 951
   _slowWhenPlayerSpotted: 1
-  speedReductionPercentage: 0.3
+  _speedReductionPercentage: 0.5
+  _roomMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  _currentRoom: {fileID: 0}
   _inRangeAction: 0
   maxStrafeDistance: 10
   _strafeTimeConstraints: {x: 0.5, y: 2}
-  _coverTimeConstraints: {x: 8, y: 10}
   _chargeTimeConstraints: {x: 0.5, y: 1}
-  _standTimeConstraints: {x: 0.5, y: 1}
+  _standTimeConstraints: {x: 0.3, y: 0.8}
   _shootWhileMoving: 1
-  _inRangeTimer: 0
-  _inRangeLimit: 0
+  _coverAction: 0
+  _initialCoverOdds: 0.01
+  _coverOddsGrowth: 0.01
+  _coverTimeConstraints: {x: 5, y: 8}
 --- !u!114 &3115551479759441363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,7 +177,7 @@ MonoBehaviour:
   _bulletDelay: 1
   _bulletOffset: 1
   _aimPercentage: 0.3
-  _maxMissDistance: 0.3
+  _maxMissDistance: 0.1
 --- !u!1 &3115551480068981646
 GameObject:
   m_ObjectHideFlags: 0

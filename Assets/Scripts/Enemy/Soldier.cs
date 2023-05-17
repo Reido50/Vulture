@@ -13,10 +13,15 @@ public class Soldier : Enemy
         StrafeRight,
         Charge,
         Stand,
-        Cover,
     }
 
-    [Header("Behavior")]
+    public enum CoverActions
+    {
+        Shoot,
+        Wait
+    }
+
+    [Header("In Range Behavior")]
 
     [Tooltip("The current in range action of the soldier")]
     [SerializeField] private InRangeActions _inRangeAction = InRangeActions.StrafeLeft;
@@ -33,20 +38,48 @@ public class Soldier : Enemy
     [Tooltip("The time constraints of which a stand can be performed. X is bottom constraint, Y is top")]
     [SerializeField] private Vector2 _standTimeConstraints;
 
-    [Tooltip("The time constraints of which a cover can be performed. X is bottom constraint, Y is top")]
-    [SerializeField] private Vector2 _coverTimeConstraints;
-
     [Tooltip("Should this enemy shoot while moving?")]
     [SerializeField] private bool _shootWhileMoving = true;
 
+    [Header("Cover Behavior")]
+
+    [Tooltip("The current in range action of the soldier")]
+    [SerializeField] private CoverActions _coverAction = CoverActions.Shoot;
+
+    [Tooltip("Initial chances of recieveing a cover action (should be small, grows over time")]
+    [Range(0, 1)]
+    [SerializeField] private float _initialCoverOdds = 0.05f;
+
+    [Tooltip("Growth to chances of recieveing a cover after every action")]
+    [Range(0, 0.1f)]
+    [SerializeField] private float _coverOddsGrowth = 0.01f;
+
+    [Tooltip("The time constraints of which a cover can be performed. X is bottom constraint, Y is top")]
+    [SerializeField] private Vector2 _coverTimeConstraints;
+
+    // The target transform reference for pathing
     private Transform _target;
+
+    // The target position reference for pathing (strafing)
     private Vector3 _targetPosition;
 
     // The timer for each action
-    private float _inRangeTimer = 0;
+    private float _actionTimer = 0;
 
-    // The point in which a new action will begin
-    private float _inRangeLimit = 0;
+    // The point in which a cover will be stopped
+    private float _actionLimit = 0;
+
+    // An additional timer for more complex actions
+    private float _additionalTimer = 0;
+
+    // An additional limit for more complex actions
+    private float _additionalLimit = 0;
+
+    // Have the cover actions been started?
+    private bool _coverActionsStarted = false;
+
+    // The current odds of choosing a cover
+    private float _coverOdds = 0.05f;
 
     #endregion
 
@@ -66,6 +99,10 @@ public class Soldier : Enemy
             _agent.ResetPath();
             _target = null;
             _targetPosition = Vector3.zero;
+
+            // Resets all timers
+            _actionTimer = 0;
+            _actionLimit = 0;
         }
 
         switch (newState)
@@ -89,11 +126,49 @@ public class Soldier : Enemy
                     _weapon.ToggleFiring(true);
                 }
 
-                _inRangeTimer = 0;
+                _actionTimer = 0;
 
                 break;
 
             case EnemyStates.Stunned:
+                break;
+            case EnemyStates.Covering:
+
+                // Query cover from room and move
+                if (_agent)
+                {
+                    if (_currentRoom == null)
+                    {
+                        ChangeState(EnemyStates.OutOfRange);
+                        return;
+                    }
+
+                    _target = _currentRoom.QueryCover(_playerRef, _sightMask);
+
+                    if (_target == null)
+                    {
+                        ChangeState(EnemyStates.OutOfRange);
+                        return;
+                    }
+
+                    if (_weapon != null)
+                    {
+                        _weapon.ToggleFiring(false);
+                    }
+
+                    _agent.speed = _baseSpeed * 1.5f;
+                    _agent.updateRotation = true;
+                    _actionLimit = Random.Range(_coverTimeConstraints.x, _coverTimeConstraints.y);
+
+                    // Cover action resetting
+                    _coverOdds = _initialCoverOdds;
+                    _coverActionsStarted = false;
+                    _additionalLimit = 0;
+                    _additionalTimer = 0;
+
+                    _agent.SetDestination(_target.position);
+                }
+
                 break;
         }
     }
@@ -117,6 +192,8 @@ public class Soldier : Enemy
         {
             _agent.updateRotation = false;
         }
+
+        _coverOdds = _initialCoverOdds;
     }
 
     protected override void Update()
@@ -145,8 +222,121 @@ public class Soldier : Enemy
                     break;
                 case EnemyStates.Stunned:
                     break;
+                case EnemyStates.Covering:
+
+                    if (!_coverActionsStarted)
+                    {
+                        if (_agent.remainingDistance < 2f)
+                        {
+                            _coverActionsStarted = true;
+                            _agent.updateRotation = false;
+
+                            _additionalTimer = 0;
+                            ChangeCoverAction((CoverActions)Random.Range(0, 2));
+                        }
+                    }
+                    else
+                    {
+                        ThinkCover();
+                    }
+
+                    break;
             }
         }
+    }
+
+    /// <summary>
+    /// Changes the current action within a cover status
+    /// </summary>
+    /// <param name="newAction">The new cover action to perform</param>
+    private void ChangeCoverAction(CoverActions newAction)
+    {
+        _coverAction = newAction;
+        _agent.ResetPath();
+        _additionalLimit = 0;
+        _additionalTimer = 0;
+
+        switch (newAction)
+        {
+            case CoverActions.Shoot:
+
+                _additionalLimit = Random.Range(_coverTimeConstraints.x / 2, _coverTimeConstraints.y / 2);
+
+                break;
+            case CoverActions.Wait:
+
+                // Send the enemy back to cover
+                if (_agent)
+                {
+                    _agent.SetDestination(_target.position);
+                }
+
+                // Stop firing!
+                if (_weapon)
+                {
+                    _weapon.ToggleFiring(false);
+                }
+
+                // Wait currently has less credence than shoot
+                _additionalLimit = Random.Range(_coverTimeConstraints.x / 4, _coverTimeConstraints.y / 4);
+
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Handles constant logic for the cover status
+    /// </summary>
+    private void ThinkCover()
+    {
+        // Timer for the OVERALL cover status
+        if (_actionTimer >= _actionLimit)
+        {
+            _currentRoom.ReturnCover(_target);
+            ChangeState(EnemyStates.OutOfRange);
+        }
+
+        // Timer for the actions within the cover
+        if (_additionalTimer >= _additionalLimit)
+        {
+            _additionalTimer = 0;
+            ChangeCoverAction((CoverActions)Random.Range(0, 2));
+        }
+
+        switch (_coverAction)
+        {
+            case CoverActions.Shoot:
+
+                if (!_playerInSight)
+                {
+                    if (_agent)
+                    {
+                        _agent.SetDestination(_playerRef.position);
+                    }
+                }
+                else
+                {
+                    // If player can be seen, stop and start shooting!
+                    _agent.ResetPath();
+
+                    if (_weapon)
+                    {
+                        _weapon.ToggleFiring(true);
+                    }
+                }
+
+                transform.LookAt(_playerRef);
+
+                break;
+            case CoverActions.Wait:
+
+                transform.LookAt(_playerRef);
+
+                break;
+        }
+
+        _actionTimer += Time.deltaTime;
+        _additionalTimer += Time.deltaTime;
     }
 
     /// <summary>
@@ -161,12 +351,22 @@ public class Soldier : Enemy
         _target = null;
         _targetPosition = Vector3.zero;
 
+        float coverRoll = Random.Range(0f, 1f);
+
+        if (coverRoll < _coverOdds)
+        {
+            ChangeState(EnemyStates.Covering);
+            return;
+        }
+
+        _coverOdds += _coverOddsGrowth;
+
         switch (newAction)
         {
             case InRangeActions.StrafeLeft:
 
                 // Set new target position
-                _inRangeLimit = Random.Range(_strafeTimeConstraints.x, _strafeTimeConstraints.y);
+                _actionLimit = Random.Range(_strafeTimeConstraints.x, _strafeTimeConstraints.y);
                 _targetPosition = transform.position + (-transform.right * (Random.Range(5, maxStrafeDistance)));
                 _agent.SetDestination(_targetPosition);
 
@@ -175,7 +375,7 @@ public class Soldier : Enemy
             case InRangeActions.StrafeRight:
 
                 // Set new target position
-                _inRangeLimit = Random.Range(_strafeTimeConstraints.x, _strafeTimeConstraints.y);
+                _actionLimit = Random.Range(_strafeTimeConstraints.x, _strafeTimeConstraints.y);
                 _targetPosition = transform.position + (transform.right * (Random.Range(5, maxStrafeDistance)));
                 _agent.SetDestination(_targetPosition);
 
@@ -184,34 +384,30 @@ public class Soldier : Enemy
             case InRangeActions.Charge:
 
                 // Target the player
-                _inRangeLimit = Random.Range(_chargeTimeConstraints.x, _chargeTimeConstraints.y);
+                _actionLimit = Random.Range(_chargeTimeConstraints.x, _chargeTimeConstraints.y);
                 _target = _playerRef;
 
                 break;
 
             case InRangeActions.Stand:
 
-                _inRangeLimit = Random.Range(_standTimeConstraints.x, _standTimeConstraints.y);
-
-                break;
-
-
-            case InRangeActions.Cover:
-
-                _inRangeLimit = Random.Range(_coverTimeConstraints.x, _coverTimeConstraints.y);
+                _actionLimit = Random.Range(_standTimeConstraints.x, _standTimeConstraints.y);
 
                 break;
         }
     }
 
+    /// <summary>
+    /// Handles constant logic for the in-range status
+    /// </summary>
     private void ThinkInRange()
     {
         // Checking if the current action is finished
         // If so, start new action
-        if (_inRangeTimer > _inRangeLimit)
+        if (_actionTimer > _actionLimit)
         {
-            _inRangeTimer = 0;
-            ChangeAction((InRangeActions)Random.Range(0, 4));
+            _actionTimer = 0;
+            ChangeAction((InRangeActions)Random.Range(0, 5));
         }
 
         // Constant behavior for every action
@@ -243,16 +439,10 @@ public class Soldier : Enemy
                 transform.LookAt(_playerRef);
 
                 break;
-
-            case InRangeActions.Cover:
-
-                transform.LookAt(_playerRef);
-
-                break;
         }
 
         // Update the timer to increment between actions
-        _inRangeTimer += Time.deltaTime;
+        _actionTimer += Time.deltaTime;
     }
 
     /// <summary>
@@ -267,6 +457,11 @@ public class Soldier : Enemy
         if (_state == EnemyStates.OutOfRange && !_shootWhileMoving)
         {
             _weapon.ToggleFiring(false);
+            return;
+        }
+
+        if (!_mutable)
+        {
             return;
         }
 
