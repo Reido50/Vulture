@@ -53,9 +53,17 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    public float PlayerIsSprinting()
+    public bool PlayerIsSprinting()
     {
-        return input.Player.Sprint.ReadValue<float>();
+        float inputVal = input.Player.Sprint.ReadValue<float>();
+        if (inputVal == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     public float PlayerIsCrouching()

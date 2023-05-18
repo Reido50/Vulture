@@ -5,8 +5,21 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
-    [Tooltip("Speed at which the player will move")]
-    [SerializeField] private float moveSpeed;
+    // Speed that the player movement uses to move the player
+    private float moveSpeed;
+    [Tooltip("Walking speed for the player")]
+    [SerializeField] private float walkSpeed;
+    [Tooltip("Sprinting speed for the player")]
+    [SerializeField] private float sprintSpeed;
+
+    public MovementState state;
+    public enum MovementState
+    {
+        walking,
+        sprinting,
+        air
+    }
+
     [Tooltip("The amount of drag that the player will feel when grounded, slowing them down")]
     [SerializeField] private float groundDrag;
     [Tooltip("Determines the jump height of the player, along with impacts from physics (gravity, etc.)")]
@@ -17,10 +30,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float airMultiplier;
     // Boolean for keeping track of when the player can jump based on the jump cooldown
     private bool readyToJump;
-
-    // Still in progress for speeds
-    //[HideInInspector] public float walkSpeed;
-    //[HideInInspector] public float sprintSpeed;
 
     [Header("Ground Check")]
     [Tooltip("The height of the player")]
@@ -66,6 +75,7 @@ public class PlayerController : MonoBehaviour
 
         UpdateInput();
         SpeedControl();
+        StateHandler();
 
         // Drag handling
         if (grounded)
@@ -96,6 +106,27 @@ public class PlayerController : MonoBehaviour
             Jump();
 
             Invoke(nameof(ResetJump), jumpCooldown);
+        }
+    }
+
+    private void StateHandler()
+    {
+        // State - Sprinting
+        if (grounded && input.PlayerIsSprinting())
+        {
+            state = MovementState.sprinting;
+            moveSpeed = sprintSpeed;
+        }
+        // State - Walking
+        else if (grounded)
+        {
+            state = MovementState.walking;
+            moveSpeed = walkSpeed;
+        }
+        // State - Air
+        else
+        {
+            state = MovementState.air;
         }
     }
 
