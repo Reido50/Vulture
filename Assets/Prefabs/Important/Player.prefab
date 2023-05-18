@@ -333,9 +333,9 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3349462834847293356}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 0e934e6542999fe4990a12ffb1be0925, type: 2}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
@@ -380,9 +380,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6909681823605554824}
-  - component: {fileID: 5116147193994780576}
   - component: {fileID: 2974332667232916286}
-  - component: {fileID: 1860415873}
+  - component: {fileID: 4471016216214170644}
+  - component: {fileID: 5078521362320132855}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -407,24 +407,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5116147193994780576
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7901662907699074902}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f136930f31e7dd43b2af998dc39954c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSpeed: 4
-  sprintSpeed: 8
-  jumpHeight: 1
-  gravityValue: -9.81
-  toggleSprint: 0
-  toggleCrouch: 0
 --- !u!114 &2974332667232916286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -456,21 +438,41 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!143 &1860415873
-CharacterController:
+--- !u!114 &4471016216214170644
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7901662907699074902}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aa4c1a630aec994285de2b44974a6ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 7
+  groundDrag: 5
+  jumpForce: 12
+  jumpCooldown: 0.25
+  airMultiplier: 0.4
+  playerHeight: 2
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  grounded: 0
+--- !u!54 &5078521362320132855
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7901662907699074902}
   serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 1

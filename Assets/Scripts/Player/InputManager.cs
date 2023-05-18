@@ -40,13 +40,26 @@ public class InputManager : MonoBehaviour
         return input.Player.Look.ReadValue<Vector2>();
     }
 
-    public bool PlayerJumped()
+    public bool PlayerIsJumping()
     {
-        return input.Player.Jump.triggered;
+        float inputVal = input.Player.Jump.ReadValue<float>();
+        if (inputVal == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     public float PlayerIsSprinting()
     {
         return input.Player.Sprint.ReadValue<float>();
+    }
+
+    public float PlayerIsCrouching()
+    {
+        return input.Player.Crouch.ReadValue<float>();
     }
 }
