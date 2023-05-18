@@ -452,16 +452,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 7
   sprintSpeed: 11
-  state: 0
   groundDrag: 5
+  state: 0
   jumpForce: 14
   jumpCooldown: 0.25
   airMultiplier: 0.4
+  crouchSpeed: 4
+  crouchYScale: 0.5
   playerHeight: 2
   groundLayer:
     serializedVersion: 2
     m_Bits: 2048
   grounded: 0
+  maxSlopeAngle: 50
 --- !u!54 &5078521362320132855
 Rigidbody:
   m_ObjectHideFlags: 0

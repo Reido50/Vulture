@@ -66,8 +66,16 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    public float PlayerIsCrouching()
+    public bool PlayerIsCrouching()
     {
-        return input.Player.Crouch.ReadValue<float>();
+        float inputVal = input.Player.Crouch.ReadValue<float>();
+        if (inputVal == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }
