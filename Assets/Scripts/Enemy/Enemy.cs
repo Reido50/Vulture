@@ -39,9 +39,16 @@ public class Enemy : MonoBehaviour
     [Tooltip("Should the enemy slow down once the player is spotted?")]
     [SerializeField] protected bool _slowWhenPlayerSpotted = true;
 
-    [Tooltip("If slowed, this value will be the speed reduction")]
+    [Tooltip("If slowed, this value will be the speed reduction percentage")]
     [Range(0, 1)]
     [SerializeField] protected float _speedReductionPercentage = 0.5f;
+
+    [Tooltip("Should the enemy speed up the further they are from the player?")]
+    [SerializeField] protected bool _proximitySpeedBoost = true;
+
+    [Tooltip("If out of range, this value will be the speed boost percentage")]
+    [Range(0, 1)]
+    [SerializeField] protected float _speedBoostPercentage = 0.5f;
 
     [Header("Room")]
 
@@ -84,9 +91,21 @@ public class Enemy : MonoBehaviour
         switch (newState)
         {
             case EnemyStates.OutOfRange:
+
+                if (_agent && _proximitySpeedBoost)
+                {
+                    _agent.speed = _baseSpeed + (_baseSpeed * _speedBoostPercentage);
+                }
+
                 _mutable = true;
                 break;
             case EnemyStates.InRange:
+
+                if (_agent)
+                {
+                    _agent.speed = _baseSpeed;
+                }
+
                 _mutable = true;
                 break;
             case EnemyStates.Stunned:
@@ -148,6 +167,7 @@ public class Enemy : MonoBehaviour
                 case EnemyStates.Stunned:
                     break;
                 case EnemyStates.Covering:
+                    CheckProximity();
                     break;
             }
 
@@ -180,6 +200,11 @@ public class Enemy : MonoBehaviour
         if (_slowWhenPlayerSpotted && _mutable)
         {
             _agent.speed = !playerSpotted ? _baseSpeed : (_baseSpeed - (_baseSpeed * _speedReductionPercentage));
+
+            if (_proximitySpeedBoost && _state == EnemyStates.OutOfRange)
+            {
+                _agent.speed += _baseSpeed * _speedBoostPercentage;
+            }
         }
     }
 
@@ -199,6 +224,14 @@ public class Enemy : MonoBehaviour
                 return;
 
             case EnemyStates.InRange:
+
+                if (Vector3.Distance(transform.position, _playerRef.position) > _inRangeProximity)
+                {
+                    ChangeState(EnemyStates.OutOfRange);
+                }
+                return;
+
+            case EnemyStates.Covering:
 
                 if (Vector3.Distance(transform.position, _playerRef.position) > _inRangeProximity)
                 {
@@ -238,6 +271,14 @@ public class Enemy : MonoBehaviour
             {
                 _currentRoom = other.GetComponent<Room>();
             }
+        }
+    }
+
+    protected virtual void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Room"))
+        {
+            _currentRoom = null;
         }
     }
 

@@ -468,5 +468,18 @@ public class Soldier : Enemy
         _weapon.ToggleFiring(playerSpotted);
     }
 
+    protected override void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Room"))
+        {
+            if (_state == EnemyStates.Covering)
+            {
+                _currentRoom.ReturnCover(_target);
+            }
+        }
+
+        base.OnTriggerExit(other);
+    }
+
     #endregion
 }
