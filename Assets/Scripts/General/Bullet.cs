@@ -40,6 +40,7 @@ public class Bullet : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         // CURRENTLY, JUST DESTROY BULLET. UNLESS?????
+
         Destroy(this.gameObject);
     }
 
