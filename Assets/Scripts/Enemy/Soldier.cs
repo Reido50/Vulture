@@ -13,6 +13,7 @@ public class Soldier : Enemy
         StrafeRight,
         Charge,
         Stand,
+        Back
     }
 
     public enum CoverActions
@@ -25,6 +26,9 @@ public class Soldier : Enemy
 
     [Tooltip("The current in range action of the soldier")]
     [SerializeField] private InRangeActions _inRangeAction = InRangeActions.StrafeLeft;
+
+    [Tooltip("The range in which the player is too close to the enemy")]
+    [SerializeField] private float _closestDesiredRange = 10f;
 
     [Tooltip("The max distance a strafe can be performed")]
     [SerializeField] private float maxStrafeDistance = 10;
@@ -139,7 +143,7 @@ public class Soldier : Enemy
                 {
                     if (_currentRoom == null)
                     {
-                        ChangeState(EnemyStates.OutOfRange);
+                        ChangeState(EnemyStates.InRange);
                         return;
                     }
 
@@ -147,7 +151,7 @@ public class Soldier : Enemy
 
                     if (_target == null)
                     {
-                        ChangeState(EnemyStates.OutOfRange);
+                        ChangeState(EnemyStates.InRange);
                         return;
                     }
 
@@ -157,7 +161,6 @@ public class Soldier : Enemy
                     }
 
                     _agent.speed = _baseSpeed * 1.5f;
-                    _agent.updateRotation = true;
                     _actionLimit = Random.Range(_coverTimeConstraints.x, _coverTimeConstraints.y);
 
                     // Cover action resetting
@@ -165,6 +168,11 @@ public class Soldier : Enemy
                     _coverActionsStarted = false;
                     _additionalLimit = 0;
                     _additionalTimer = 0;
+
+                    if (_weapon)
+                    {
+                        _weapon.ToggleFiring(true);
+                    }
 
                     _agent.SetDestination(_target.position);
                 }
@@ -226,13 +234,17 @@ public class Soldier : Enemy
 
                     if (!_coverActionsStarted)
                     {
+                        // If done moving to cover, start doing actions!
                         if (_agent.remainingDistance < 2f)
                         {
                             _coverActionsStarted = true;
-                            _agent.updateRotation = false;
 
                             _additionalTimer = 0;
                             ChangeCoverAction((CoverActions)Random.Range(0, 2));
+                        }
+                        else
+                        {
+                            transform.LookAt(_playerRef);
                         }
                     }
                     else
@@ -266,13 +278,13 @@ public class Soldier : Enemy
             case CoverActions.Wait:
 
                 // Send the enemy back to cover
-                if (_agent)
+                if (_agent && _target)
                 {
                     _agent.SetDestination(_target.position);
                 }
 
                 // Stop firing!
-                if (_weapon)
+                if (_weapon && !_playerInSight)
                 {
                     _weapon.ToggleFiring(false);
                 }
@@ -293,7 +305,15 @@ public class Soldier : Enemy
         if (_actionTimer >= _actionLimit)
         {
             _currentRoom.ReturnCover(_target);
-            ChangeState(EnemyStates.OutOfRange);
+            ChangeState(EnemyStates.InRange);
+        }
+
+        // If player rushes enemy in cover, break out of cover
+        if (_distanceFromPlayer < _closestDesiredRange / 2)
+        {
+            _currentRoom.ReturnCover(_target);
+            ChangeState(EnemyStates.InRange);
+            return;
         }
 
         // Timer for the actions within the cover
@@ -332,6 +352,24 @@ public class Soldier : Enemy
 
                 transform.LookAt(_playerRef);
 
+                if (_target)
+                {
+                    if (Vector3.Distance(_target.position, transform.position) < 0.5f)
+                    {
+                        if (_playerInSight)
+                        {
+                            ChangeState(EnemyStates.InRange);
+                        }
+                        else
+                        {
+                            if (_weapon)
+                            {
+                                _weapon.ToggleFiring(false);
+                            }
+                        }
+                    }
+                }
+
                 break;
         }
 
@@ -348,18 +386,28 @@ public class Soldier : Enemy
         // Resets all action values
         _inRangeAction = newAction;
         _agent.ResetPath();
+        _agent.speed = _baseSpeed;
         _target = null;
         _targetPosition = Vector3.zero;
 
-        float coverRoll = Random.Range(0f, 1f);
-
-        if (coverRoll < _coverOdds)
+        if (_weapon)
         {
-            ChangeState(EnemyStates.Covering);
-            return;
+            _weapon.ToggleFiring(true);
         }
 
-        _coverOdds += _coverOddsGrowth;
+        // Only add to cover odds under normal circumstances
+        if (_inRangeAction != InRangeActions.Back && _currentRoom != null)
+        {
+            float coverRoll = Random.Range(0f, 1f);
+
+            if (coverRoll < _coverOdds)
+            {
+                ChangeState(EnemyStates.Covering);
+                return;
+            }
+
+            _coverOdds += _coverOddsGrowth;
+        }
 
         switch (newAction)
         {
@@ -394,6 +442,31 @@ public class Soldier : Enemy
                 _actionLimit = Random.Range(_standTimeConstraints.x, _standTimeConstraints.y);
 
                 break;
+
+            case InRangeActions.Back:
+
+                _actionLimit = Random.Range(_strafeTimeConstraints.x, _strafeTimeConstraints.y);
+
+                // Try to flee backwards, else take cover
+                _targetPosition = GetFleePosition();
+                if (_targetPosition == Vector3.zero)
+                {
+                    if (_currentRoom != null)
+                    {
+                        ChangeState(EnemyStates.Covering);
+                        return;
+                    }
+                    else
+                    {
+                        // If no cover, strafe instead!
+                        _agent.speed = _baseSpeed * 1.5f;
+                        _targetPosition = transform.position + ((Random.Range(0, 2) * 2 - 1) * transform.right * (Random.Range(5, maxStrafeDistance)));
+                    }
+                }
+
+                _agent.SetDestination(_targetPosition);
+
+                break;
         }
     }
 
@@ -407,7 +480,19 @@ public class Soldier : Enemy
         if (_actionTimer > _actionLimit)
         {
             _actionTimer = 0;
+
             ChangeAction((InRangeActions)Random.Range(0, 4));
+        }
+
+        // If the player is too close to enemy, try to back up or find cover
+        if (_distanceFromPlayer < _closestDesiredRange)
+        {
+            if (_inRangeAction != InRangeActions.Back && _state != EnemyStates.Covering)
+            {
+                _actionTimer = 0;
+
+                ChangeAction(InRangeActions.Back);
+            }
         }
 
         // Constant behavior for every action
@@ -435,6 +520,11 @@ public class Soldier : Enemy
 
                 break;
             case InRangeActions.Stand:
+
+                transform.LookAt(_playerRef);
+
+                break;
+            case InRangeActions.Back:
 
                 transform.LookAt(_playerRef);
 
@@ -479,6 +569,23 @@ public class Soldier : Enemy
         }
 
         base.OnTriggerExit(other);
+    }
+
+    /// <summary>
+    /// If player is too close to enemy, try to find a way out
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 GetFleePosition()
+    {
+        Vector3 testPos = _playerRef.position - transform.forward * _inRangeProximity * 2;
+
+        NavMeshPath path = new NavMeshPath();
+        if (!_agent.CalculatePath(testPos, path))
+        {
+            return Vector3.zero;
+        }
+
+        return testPos;
     }
 
     #endregion

@@ -15,7 +15,7 @@ public class Room : MonoBehaviour
     [SerializeField] private Transform _coverParent;
 
     // A record of which covers are taken
-    private List<int> _coverRecords = new List<int>();
+    private Dictionary<Transform, Transform> _coverRecords = new Dictionary<Transform, Transform>();
 
     private List<Transform> _coverTransforms = new List<Transform>();
 
@@ -30,7 +30,7 @@ public class Room : MonoBehaviour
         foreach (Transform cover in _coverParent)
         {
             _coverTransforms.Add(cover);
-            _coverRecords.Add(0);
+            _coverRecords[cover] = null;
         }
     }
 
@@ -59,7 +59,7 @@ public class Room : MonoBehaviour
         for (int i = 0; i < temp.Count; i++)
         {
             // If the cover is already being used, continue
-            if (_coverRecords[i] == 1)
+            if (_coverRecords[temp[i]] != null)
             {
                 continue;
             }
@@ -79,7 +79,7 @@ public class Room : MonoBehaviour
             }
 
             // Player can't see the cover!
-            _coverRecords[i] = 1;
+            _coverRecords[temp[i]] = enemy;
             return temp[i];
         }
 
@@ -93,11 +93,13 @@ public class Room : MonoBehaviour
     /// <param name="returnedCover">Reference to the returned cover</param>
     public void ReturnCover(Transform returnedCover)
     {
-        int ind = _coverTransforms.IndexOf(returnedCover);
-
-        if (ind < _coverRecords.Count)
+        if (_coverRecords[returnedCover] != null)
         {
-            _coverRecords[ind] = 0;
+            _coverRecords[returnedCover] = null;
+        }
+        else
+        {
+            Debug.LogWarning("Returning an unused cover!");
         }
     }
 }

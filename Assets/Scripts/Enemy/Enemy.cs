@@ -76,6 +76,9 @@ public class Enemy : MonoBehaviour
     // Is this enemy currently mutable in terms of speed/actions?
     protected bool _mutable = true;
 
+    // Updated distance from player
+    protected float _distanceFromPlayer = 0;
+
     #endregion
 
     #region Methods
@@ -150,6 +153,8 @@ public class Enemy : MonoBehaviour
     {
         if (_playerRef)
         {
+            _distanceFromPlayer = Vector3.Distance(transform.position, _playerRef.position);
+
             switch (_state)
             {
                 case EnemyStates.OutOfRange:
@@ -217,7 +222,7 @@ public class Enemy : MonoBehaviour
         {
             case EnemyStates.OutOfRange:
 
-                if (Vector3.Distance(transform.position, _playerRef.position) <= _inRangeProximity && _playerInSight)
+                if (_distanceFromPlayer <= _inRangeProximity && (_playerInSight || _distanceFromPlayer < 2f))
                 {
                     ChangeState(EnemyStates.InRange);
                 }
@@ -225,7 +230,7 @@ public class Enemy : MonoBehaviour
 
             case EnemyStates.InRange:
 
-                if (Vector3.Distance(transform.position, _playerRef.position) > _inRangeProximity)
+                if (_distanceFromPlayer > _inRangeProximity)
                 {
                     ChangeState(EnemyStates.OutOfRange);
                 }
@@ -233,7 +238,7 @@ public class Enemy : MonoBehaviour
 
             case EnemyStates.Covering:
 
-                if (Vector3.Distance(transform.position, _playerRef.position) > _inRangeProximity)
+                if (_distanceFromPlayer > (_inRangeProximity * 1.5f))
                 {
                     ChangeState(EnemyStates.OutOfRange);
                 }

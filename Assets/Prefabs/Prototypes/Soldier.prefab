@@ -255,7 +255,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _state: 0
   _playerInSight: 0
-  _inRangeProximity: 15
+  _inRangeProximity: 20
   _sightDistance: 30
   _sightMask:
     serializedVersion: 2
@@ -269,6 +269,7 @@ MonoBehaviour:
     m_Bits: 1024
   _currentRoom: {fileID: 0}
   _inRangeAction: 0
+  _closestDesiredRange: 10
   maxStrafeDistance: 10
   _strafeTimeConstraints: {x: 0.5, y: 2}
   _chargeTimeConstraints: {x: 0.3, y: 0.5}
