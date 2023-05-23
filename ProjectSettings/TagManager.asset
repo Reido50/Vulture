@@ -19,7 +19,7 @@ TagManager:
   - Room
   - Ground
   - PatrolMover
-  - 
+  - WalkableWall
   - 
   - 
   - 
