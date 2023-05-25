@@ -78,4 +78,19 @@ public class InputManager : MonoBehaviour
             return true;
         }
     }
+
+    public bool PlayerStartedSprinting()
+    {
+        return input.Player.Sprint.triggered && input.Player.Sprint.ReadValue<float>() > 0;
+    }
+
+    public bool PlayerStartedCrouching()
+    {
+        return input.Player.Crouch.triggered && input.Player.Crouch.ReadValue<float>() > 0;
+    }
+
+    public bool PlayerStartedJumping()
+    {
+        return input.Player.Jump.triggered && input.Player.Jump.ReadValue<float>() > 0;
+    }
 }

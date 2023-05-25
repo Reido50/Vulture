@@ -11,8 +11,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float walkSpeed;
     [Tooltip("Sprinting speed for the player")]
     [SerializeField] private float sprintSpeed;
+    [Tooltip("Sliding speed for the player")]
+    [SerializeField] private float slideSpeed;
+
+    [Tooltip("Intended speed for the player to be moving at")]
+    private float desiredMoveSpeed;
+    [Tooltip("Most recent speed that the player should have been at")]
+    private float lastDesiredMoveSpeed;
+
     [Tooltip("The amount of drag that the player will feel when grounded, slowing them down")]
     [SerializeField] private float groundDrag;
+
+    [Tooltip("*Don't change this if you're not confident* The amount of speed needed for a speed change to instantly change the player's speed or gradually lower it")]
+    [SerializeField] private float instantSpeedChangeThreshold = 4f;
 
     [Tooltip("The players current state")]
     public MovementState state;
@@ -22,8 +33,11 @@ public class PlayerController : MonoBehaviour
         walking,
         sprinting,
         crouching,
+        sliding,
         air
     }
+
+    public bool sliding;
 
     [Header("Jump Values")]
     [Tooltip("Determines the jump height of the player, along with impacts from physics (gravity, etc.)")]
@@ -52,18 +66,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool grounded;
 
     [Header("Slope Handling")]
-    [Tooltip("")]
+    [Tooltip("Maximum angle for slopes before player can no longer walk up them")]
     [SerializeField] private float maxSlopeAngle;
-    //
+    // Raycast checking for a slope under the player
     private RaycastHit slopeHit;
-    //
+    // Handling for when the player jumps when on a slope
     private bool exitingSlope;
 
     // Global variables for storing player information
     // Global variable assigned by players input for calculating movement direction
-    private float horizontalInput;
+    [HideInInspector] public float horizontalInput;
     // Global variable assigned by players input for calculating movement direction
-    private float verticalInput;
+    [HideInInspector] public float verticalInput;
     // Direction the player should move after the inputs have been multiplied in
     private Vector3 moveDirection;
 
@@ -88,6 +102,8 @@ public class PlayerController : MonoBehaviour
         readyToJump = true;
 
         startYScale = transform.localScale.y;
+
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
@@ -131,14 +147,14 @@ public class PlayerController : MonoBehaviour
         }
 
         // start crouching
-        if(state != MovementState.crouching && input.PlayerIsCrouching())
+        if(state != MovementState.crouching && input.PlayerIsCrouching() && !sliding)
         {
             transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
 
         // stop crouching
-        if(!input.PlayerIsCrouching())
+        if(!input.PlayerIsCrouching() && !sliding)
         {
             transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
         }
@@ -149,29 +165,54 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void StateHandler()
     {
+        if(sliding)
+        {
+            state = MovementState.sliding;
+
+            if(OnSlope() && rb.velocity.y < 0.1f)
+            {
+                desiredMoveSpeed = slideSpeed;
+            }
+            else
+            {
+                desiredMoveSpeed = sprintSpeed;
+            }
+        }
         // State - Crouching
-        if(input.PlayerIsCrouching())
+        else if (input.PlayerIsCrouching())
         {
             state = MovementState.crouching;
-            moveSpeed = crouchSpeed;
+            desiredMoveSpeed = crouchSpeed;
         }
         // State - Sprinting
         else if (grounded && input.PlayerIsSprinting())
         {
             state = MovementState.sprinting;
-            moveSpeed = sprintSpeed;
+            desiredMoveSpeed = sprintSpeed;
         }
         // State - Walking
         else if (grounded)
         {
             state = MovementState.walking;
-            moveSpeed = walkSpeed;
+            desiredMoveSpeed = walkSpeed;
         }
         // State - Air
         else
         {
             state = MovementState.air;
         }
+
+        if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > instantSpeedChangeThreshold && moveSpeed != 0)
+        {
+            StopAllCoroutines();
+            StartCoroutine(LerpMoveSpeed());
+        }
+        else
+        {
+            moveSpeed = desiredMoveSpeed;
+        }
+
+        lastDesiredMoveSpeed = desiredMoveSpeed;
     }
 
     /// <summary>
@@ -186,7 +227,7 @@ public class PlayerController : MonoBehaviour
 
         if(OnSlope() && !exitingSlope)
         {
-            rb.AddForce(GetSlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+            rb.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 20f, ForceMode.Force);
             if(rb.velocity.y > 0)
             {
                 rb.AddForce(Vector3.down * 80f, ForceMode.Force);
@@ -252,10 +293,11 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Checks whether or not the player is on a slope using a raycast and 
+    /// comparing to the slope angle to the max slope angle variable.
     /// </summary>
-    /// <returns></returns>
-    private bool OnSlope()
+    /// <returns>A boolean for if the player is on a slope</returns>
+    public bool OnSlope()
     {
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f))
         {
@@ -266,8 +308,34 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    private Vector3 GetSlopeMoveDirection()
+    /// <summary>
+    /// Calculates the move direction by projecting a direction onto a slope.
+    /// Primarily created for calculating the direction of the players inputs relative to the slope.
+    /// </summary>
+    /// <param name="dir">Direction being projected onto the plane</param>
+    /// <returns>Returns the adjusted direction relative to the plane</returns>
+    public Vector3 GetSlopeMoveDirection(Vector3 dir)
     {
-        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
+        return Vector3.ProjectOnPlane(dir, slopeHit.normal).normalized;
+    }
+
+    /// <summary>
+    /// Smoother speed change used to maintain some momentum + adjust the speed over time, rather than instantaneously.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator LerpMoveSpeed()
+    {
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float startValue = moveSpeed;
+
+        while (time < difference)
+        {
+            moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        moveSpeed = desiredMoveSpeed;
     }
 }
