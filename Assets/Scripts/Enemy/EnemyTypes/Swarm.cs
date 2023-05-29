@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Swarm : Enemy
 {
@@ -61,6 +62,8 @@ public class Swarm : Enemy
                 if (_agent)
                 {
                     _agent.SetDestination(_target.position);
+
+                    UpdateRotation();
                 }
 
                 break;
@@ -117,6 +120,30 @@ public class Swarm : Enemy
         }
 
         _grounded = false;
+    }
+
+    /// <summary>
+    /// Updates rotation based whether on ceiling or floor
+    /// </summary>
+    private void UpdateRotation()
+    {
+        NavMeshHit navMeshHit;
+        _agent.SamplePathPosition(NavMesh.AllAreas, 0f, out navMeshHit);
+
+        // If the enemy is on the ceiling, set new rotation
+        // 262144 is the bitmap location for the ceiling area in the NavMesh areas map
+        if (navMeshHit.mask == 262144)
+        {
+            _agent.updateRotation = false;
+
+            Quaternion newRot = Quaternion.LookRotation(_agent.velocity);
+            newRot *= Quaternion.Euler(0, 0, 180);
+
+            transform.rotation = newRot;
+            return;
+        }
+
+        _agent.updateRotation = true;
     }
 
     #endregion

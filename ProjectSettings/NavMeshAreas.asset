@@ -41,7 +41,7 @@ NavMeshProjectSettings:
     cost: 1
   - name: 
     cost: 1
-  - name: 
+  - name: Ceiling
     cost: 1
   - name: 
     cost: 1
