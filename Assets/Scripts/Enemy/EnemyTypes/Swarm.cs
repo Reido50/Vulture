@@ -136,11 +136,14 @@ public class Swarm : Enemy
         {
             _agent.updateRotation = false;
 
-            Quaternion newRot = Quaternion.LookRotation(_agent.velocity);
-            newRot *= Quaternion.Euler(0, 0, 180);
+            if (_agent.velocity != Vector3.zero)
+            {
+                Quaternion newRot = Quaternion.LookRotation(_agent.velocity);
+                newRot *= Quaternion.Euler(0, 0, 180);
 
-            transform.rotation = newRot;
-            return;
+                transform.rotation = newRot;
+                return;
+            }
         }
 
         _agent.updateRotation = true;
