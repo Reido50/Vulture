@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+    #region Variables 
+
     [Header("Identification")]
 
     [Tooltip("The unique ID of this room")]
@@ -18,6 +20,10 @@ public class Room : MonoBehaviour
     private Dictionary<Transform, Transform> _coverRecords = new Dictionary<Transform, Transform>();
 
     private List<Transform> _coverTransforms = new List<Transform>();
+
+    #endregion
+
+    #region Methods
 
     void Start()
     {
@@ -102,4 +108,6 @@ public class Room : MonoBehaviour
             Debug.LogWarning("Returning an unused cover!");
         }
     }
+
+    #endregion
 }

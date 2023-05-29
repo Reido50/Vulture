@@ -26,17 +26,20 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
+        // Currently spawn based on a timer
+        // WIP WILL BECOME A SMARTER, ROOMBASED SYSTEM
         InvokeRepeating("Spawn", Random.Range(_spawnDelay / 2, _spawnDelay + _spawnDelay / 2), _spawnDelay);
     }
 
-
+    /// <summary>
+    /// Spawns a random enemy from the pool
+    /// </summary>
     private void Spawn()
     {
         int index = Random.Range(0, _enemies.Count);
 
         GameObject newEnemy = Instantiate(_enemies[index], transform.position, Quaternion.identity);
         newEnemy.transform.parent = this.transform;
-
     }
 
     #endregion

@@ -31,6 +31,7 @@ public class ObjectMover : MonoBehaviour
     // The direction of the point flow (1 for forward, -1 for backward)
     private int _direction = 1;
 
+    // The current timer of waiting at a point
     private float _currWaitTimer = 0;
 
     #endregion
@@ -55,6 +56,7 @@ public class ObjectMover : MonoBehaviour
         }
         else
         {
+            // Wait at point!
             if (_currWaitTimer > _waitTime)
             {
                 NextPoint();
@@ -64,6 +66,9 @@ public class ObjectMover : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Chooses the next point in the list of available stops
+    /// </summary>
     private void NextPoint()
     {
         if (_isFullLoop)

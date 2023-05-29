@@ -83,8 +83,10 @@ public class Tracer : Enemy
     // The point in which a cover will be stopped
     private float _actionLimit = 0;
 
+    // Is the enemy currently grounded?
     public bool _grounded = true;
 
+    // Was the enemy previously grounded when switching orientation?
     private bool _previousGrounded = true;
 
     // The current odds of choosing a cover
@@ -396,6 +398,11 @@ public class Tracer : Enemy
         _actionTimer += Time.deltaTime;
     }
 
+    /// <summary>
+    /// Gets a diagonal position based on zig zag patterns
+    /// </summary>
+    /// <param name="isLeft">Is the enemy tying to diagonal left?</param>
+    /// <returns>A position of the target diagonal location</returns>
     private Vector3 GetDiagonalPosition(bool isLeft)
     {
 
@@ -413,6 +420,9 @@ public class Tracer : Enemy
         return offset;
     }
 
+    /// <summary>
+    /// Triggers a swap from floor to wall (or vice versa)
+    /// </summary>
     private void TriggerSwap()
     {
         _swapOdds = _initialSwapOdds;
@@ -431,6 +441,10 @@ public class Tracer : Enemy
         }
     }
 
+    /// <summary>
+    /// Gets a wall position for the enemy to initially target
+    /// </summary>
+    /// <returns>Position on a wall of a viable space</returns>
     private Vector3 GetWallPosition()
     {
         Vector3 upVec = new Vector3(0, Random.Range(_agent.height, _agent.height * 2), 0);
@@ -461,6 +475,9 @@ public class Tracer : Enemy
         return Vector3.zero;
     }
 
+    /// <summary>
+    /// Checks whether the enemy is currently grounded
+    /// </summary>
     private void GroundedCheck()
     {
         RaycastHit hit;
@@ -474,6 +491,9 @@ public class Tracer : Enemy
         _grounded = false;
     }
 
+    /// <summary>
+    /// CheckProximity override that has different logic for covering
+    /// </summary>
     protected override void CheckProximity()
     {
         switch (_state)

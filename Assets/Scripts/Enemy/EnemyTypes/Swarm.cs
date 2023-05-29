@@ -22,6 +22,7 @@ public class Swarm : Enemy
     // The target of this enemies movement
     private Transform _target;
 
+    // Is the enemy currently grounded?
     public bool _grounded = true;
 
     #endregion
@@ -50,6 +51,7 @@ public class Swarm : Enemy
     {
         base.Update();
 
+        // Check constantly whether grounded
         GroundedCheck();
 
         switch (_state)
@@ -101,6 +103,9 @@ public class Swarm : Enemy
         }
     }
 
+    /// <summary>
+    /// Uses a small raycast to look for floor layer
+    /// </summary>
     private void GroundedCheck()
     {
         RaycastHit hit;

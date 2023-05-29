@@ -129,6 +129,7 @@ GameObject:
   - component: {fileID: 8169422812659762239}
   - component: {fileID: 8169422812659762228}
   - component: {fileID: 8169422812659762231}
+  - component: {fileID: 743340607595286029}
   m_Layer: 7
   m_Name: Swarm
   m_TagString: Untagged
@@ -254,7 +255,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _state: 0
   _playerInSight: 0
-  _inRangeProximity: 5
+  _inRangeProximity: 3
   _sightDistance: 30
   _sightMask:
     serializedVersion: 2
@@ -275,6 +276,20 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   _grounded: 1
+--- !u!114 &743340607595286029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8169422812659762238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34bc7dbedabb1c348ab2470d80c9fef1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxHealth: 100
+  _currentHealth: 100
 --- !u!1 &8169422813438642795
 GameObject:
   m_ObjectHideFlags: 0
