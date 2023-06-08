@@ -11,6 +11,9 @@ public class Room : MonoBehaviour
     [Tooltip("The unique ID of this room")]
     [SerializeField] private string _roomID = "";
 
+    [Header("Spawning")]
+
+
     [Header("Cover")]
 
     [Tooltip("List of cover transforms")]
@@ -19,7 +22,14 @@ public class Room : MonoBehaviour
     // A record of which covers are taken
     private Dictionary<Transform, Transform> _coverRecords = new Dictionary<Transform, Transform>();
 
+    // The transforms of every cover position
     private List<Transform> _coverTransforms = new List<Transform>();
+
+    // The list of all possible spawners
+    private List<SmartSpawner> _spawners = new List<SmartSpawner>();
+
+    // Is the player currently inside this room?
+    private bool _playerInside = false;
 
     #endregion
 
@@ -37,6 +47,11 @@ public class Room : MonoBehaviour
         {
             _coverTransforms.Add(cover);
             _coverRecords[cover] = null;
+        }
+
+        foreach (SmartSpawner spawner in GetComponentsInChildren<SmartSpawner>())
+        {
+            _spawners.Add(spawner);
         }
     }
 
@@ -106,6 +121,41 @@ public class Room : MonoBehaviour
         else
         {
             Debug.LogWarning("Returning an unused cover!");
+        }
+    }
+
+    /// <summary>
+    /// Toggles whether the player is inside the room or not
+    /// </summary>
+    /// <param name="isInside">Is the player inside the room?</param>
+    public void PlayerToggle(bool isInside)
+    {
+        _playerInside = isInside;
+
+        // Let the SmartMap know which room is being prioritized
+        if (isInside)
+        {
+            if (SmartMap.instance)
+            {
+                SmartMap.instance.SetActiveRoom(this);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Spawns an enemy from the available spawners
+    /// </summary>
+    public void RandomSpawn()
+    {
+        if (_spawners.Count != 0)
+        {
+            int randomIndex = Random.Range(0, _spawners.Count);
+
+            _spawners[randomIndex].Spawn();
+        }
+        else
+        {
+            Debug.LogWarning($"Trying to spawn in ${_roomID} with no spawners available!");
         }
     }
 
