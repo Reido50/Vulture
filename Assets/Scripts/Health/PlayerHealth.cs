@@ -13,7 +13,7 @@ public class PlayerHealth : Health
         base.Die();
     }
 
-    protected override void TakeDamage(float dmg)
+    public override void TakeDamage(float dmg)
     {
         base.TakeDamage(dmg);
     }
