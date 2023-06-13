@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 8169422812659762228}
   - component: {fileID: 8169422812659762231}
   - component: {fileID: 743340607595286029}
+  - component: {fileID: 7579260106337620847}
   m_Layer: 7
   m_Name: Swarm
   m_TagString: Untagged
@@ -288,8 +289,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34bc7dbedabb1c348ab2470d80c9fef1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 100
-  _currentHealth: 100
+  _maxHealth: 30
+  _currentHealth: 30
+--- !u!114 &7579260106337620847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8169422812659762238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1b07e00b7662e44c9e615b110469ae6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _colliderPrefab: {fileID: 1100664159678594653, guid: af58aa30412f82141ad9971003037918,
+    type: 3}
+  _colliderDamage: 5
+  _attackDelay: 2
+  _colliderOffset: 2
 --- !u!1 &8169422813438642795
 GameObject:
   m_ObjectHideFlags: 0

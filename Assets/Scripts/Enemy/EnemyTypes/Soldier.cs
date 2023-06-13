@@ -93,7 +93,7 @@ public class Soldier : Enemy
     /// Changes and properly transitions all soldier states
     /// </summary>
     /// <param name="newState">The new state of this enemy</param>
-    protected override void ChangeState(EnemyStates newState)
+    public override void ChangeState(EnemyStates newState)
     {
         base.ChangeState(newState);
 

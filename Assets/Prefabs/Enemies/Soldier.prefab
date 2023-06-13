@@ -129,8 +129,8 @@ GameObject:
   - component: {fileID: 3115551479759441370}
   - component: {fileID: 3115551479759441361}
   - component: {fileID: 3115551479759441360}
-  - component: {fileID: 3115551479759441363}
-  - component: {fileID: 3988691362612654273}
+  - component: {fileID: 8215323132662823611}
+  - component: {fileID: 5738036413460159365}
   m_Layer: 7
   m_Name: Soldier
   m_TagString: Untagged
@@ -280,7 +280,7 @@ MonoBehaviour:
   _initialCoverOdds: 0.01
   _coverOddsGrowth: 0.01
   _coverTimeConstraints: {x: 5, y: 8}
---- !u!114 &3115551479759441363
+--- !u!114 &8215323132662823611
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -289,30 +289,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 3115551479759441371}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd570b80b40860a4f969252a81ee06ca, type: 3}
+  m_Script: {fileID: 11500000, guid: 0eaa2e27f537a8d41ae7f8198fd432db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bulletPrefab: {fileID: 4978727838991092556, guid: a0ef9cbaddbfdfd438d59bd2126d03d6,
+  _maxHealth: 50
+  _currentHealth: 50
+--- !u!114 &5738036413460159365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3115551479759441371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc12f2f9a0e0dff4688d54a2fda9d053, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _colliderPrefab: {fileID: 4978727838991092556, guid: a0ef9cbaddbfdfd438d59bd2126d03d6,
     type: 3}
+  _colliderDamage: 5
+  _attackDelay: 1
+  _colliderOffset: 1
   _bulletSpeed: 20
-  _bulletDelay: 1
-  _bulletOffset: 1
-  _aimPercentage: 0.3
-  _maxMissDistance: 0.1
---- !u!114 &3988691362612654273
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3115551479759441371}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34bc7dbedabb1c348ab2470d80c9fef1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxHealth: 100
-  _currentHealth: 100
+  _aimPercentage: 0.8
+  _maxMissDistance: 0.2
 --- !u!1 &3115551480068981646
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,11 +7,6 @@ public class Swarm : Enemy
 {
     #region Variables
 
-    [Header("General Tracer Options")]
-
-    [Tooltip("The damage done by one strike")]
-    [SerializeField] private float _strikeDamage = 5f;
-
     [Header("Layer Masks")]
 
     [Tooltip("The layermask for detecting walls to climb")]
@@ -68,6 +63,9 @@ public class Swarm : Enemy
 
                 break;
             case EnemyStates.InRange:
+
+                transform.LookAt(_playerRef);
+
                 break;
             case EnemyStates.Stunned:
                 break;
@@ -76,7 +74,7 @@ public class Swarm : Enemy
         }
     }
 
-    protected override void ChangeState(EnemyStates newState)
+    public override void ChangeState(EnemyStates newState)
     {
         base.ChangeState(newState);
 
@@ -96,8 +94,19 @@ public class Swarm : Enemy
                     _target = _playerRef;
                 }
 
+                if (_weapon)
+                {
+                    _weapon.ToggleFiring(false);
+                }
+
                 break;
             case EnemyStates.InRange:
+
+                if (_weapon)
+                {
+                    _weapon.ToggleFiring(true);
+                }
+
                 break;
             case EnemyStates.Stunned:
                 break;

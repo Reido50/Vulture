@@ -87,7 +87,7 @@ public class Enemy : MonoBehaviour
     /// Changes and properly transitions all enemy states
     /// </summary>
     /// <param name="newState">The new state of this enemy</param>
-    protected virtual void ChangeState(EnemyStates newState)
+    public virtual void ChangeState(EnemyStates newState)
     {
         _state = newState;
 
@@ -285,6 +285,15 @@ public class Enemy : MonoBehaviour
         {
             _currentRoom = null;
         }
+    }
+
+    /// <summary>
+    /// Getter for the current enemy state
+    /// </summary>
+    /// <returns>The current enemy state</returns>
+    public EnemyStates GetState()
+    {
+        return _state;
     }
 
     #endregion

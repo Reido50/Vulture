@@ -139,7 +139,7 @@ public class Patrol : Enemy
         }
     }
 
-    protected override void ChangeState(EnemyStates newState)
+    public override void ChangeState(EnemyStates newState)
     {
         base.ChangeState(newState);
 

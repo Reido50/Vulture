@@ -6,16 +6,18 @@ public class Bullet : MonoBehaviour
 {
     #region Variables
 
+    [Header("Bullet Options")]
+
     [Tooltip("The time until the bullet will despawn naturally")]
     [SerializeField] private float timeTilDestroy = 3f;
 
     [Header("Collision Values")]
 
-    [Tooltip("The layer for player bullets")]
-    [SerializeField] private string _playerBulletLayer;
-
     [Tooltip("The layer for enemy bullets")]
     [SerializeField] private string _enemyBulletLayer;
+
+    // The damage done by this bullet
+    private float _damage;
 
     #endregion
 
@@ -27,19 +29,21 @@ public class Bullet : MonoBehaviour
         Destroy(this.gameObject, timeTilDestroy);
     }
 
-    /// <summary>
-    /// Sets the bullets physics layer accordingly based on ownership
-    /// </summary>
-    /// <param name="isPlayerBullet">True if the player is shooting this bullet</param>
-    public void SetBulletLayer(bool isPlayerBullet)
+    public void SetDamage(float dmg)
     {
-        string chosenLayer = isPlayerBullet ? _playerBulletLayer : _enemyBulletLayer;
-        gameObject.layer = LayerMask.NameToLayer(chosenLayer);
+        _damage = dmg;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // CURRENTLY, JUST DESTROY BULLET. UNLESS?????
+        if (collision.transform.GetComponent<Health>())
+        {
+            collision.transform.GetComponent<Health>().TakeDamage(_damage);
+        }
+        else if (collision.transform.GetComponentInParent<Health>())
+        {
+            collision.transform.GetComponent<Health>().TakeDamage(_damage);
+        }
 
         Destroy(this.gameObject);
     }
