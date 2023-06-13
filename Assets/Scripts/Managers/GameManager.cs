@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     // Reference to the player transform
     private Transform _playerTransform;
 
+
     #endregion
 
     #region Methods

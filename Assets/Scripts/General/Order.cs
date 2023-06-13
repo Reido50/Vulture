@@ -16,7 +16,8 @@ public class Order
     public EnemyTypes _enemy;
 
     [Tooltip("The amount of this enemy to spawn ")]
-    public float _enemyAmount = 1;
+    public int _enemyAmount = 1;
 
     #endregion
+
 }

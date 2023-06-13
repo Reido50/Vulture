@@ -10,4 +10,16 @@ public class Segment
 
     [Tooltip("If the prior segment is about to end, begin spawning from new segment instead of waiting")]
     public bool _allowEarlySpawning = true;
+
+    public int GetTotalEnemies()
+    {
+        int total = 0;
+
+        foreach (Order order in _orders)
+        {
+            total += order._enemyAmount;
+        }
+
+        return total;
+    }
 }

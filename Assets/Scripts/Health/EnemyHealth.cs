@@ -5,6 +5,9 @@ using UnityEngine;
 public class EnemyHealth : Health
 {
     #region Variables
+
+    public Order.EnemyTypes _enemyType;
+
     #endregion
 
     #region Methods
@@ -15,6 +18,8 @@ public class EnemyHealth : Health
     protected override void Die()
     {
         base.Die();
+
+        RoundManager._instance.RecordEnemyKill(_enemyType);
 
         Destroy(this.gameObject);
     }

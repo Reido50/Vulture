@@ -26,7 +26,11 @@ public class Room : MonoBehaviour
     private List<Transform> _coverTransforms = new List<Transform>();
 
     // The list of all possible spawners
-    private List<SmartSpawner> _spawners = new List<SmartSpawner>();
+    private List<SmartSpawner> _soldierSpawners = new List<SmartSpawner>();
+
+
+    // The list of all possible spawners
+    private List<SmartSpawner> _swarmSpawners = new List<SmartSpawner>();
 
     // Is the player currently inside this room?
     private bool _playerInside = false;
@@ -51,7 +55,14 @@ public class Room : MonoBehaviour
 
         foreach (SmartSpawner spawner in GetComponentsInChildren<SmartSpawner>())
         {
-            _spawners.Add(spawner);
+            if (spawner._enemyType == Order.EnemyTypes.Soldier)
+            {
+                _soldierSpawners.Add(spawner);
+            }
+            else
+            {
+                _swarmSpawners.Add(spawner);
+            }
         }
     }
 
@@ -142,21 +153,42 @@ public class Room : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Spawns an enemy from the available spawners
-    /// </summary>
-    public void RandomSpawn()
+    public bool SmartSpawn(Order order)
     {
-        if (_spawners.Count != 0)
+        switch (order._enemy)
         {
-            int randomIndex = Random.Range(0, _spawners.Count);
+            case Order.EnemyTypes.Soldier:
 
-            _spawners[randomIndex].Spawn();
+                if (_soldierSpawners.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < order._enemyAmount; i++)
+                {
+                    int randIndex = Random.Range(0, _soldierSpawners.Count);
+                    _soldierSpawners[randIndex].AcceptOrder(1);
+                }
+
+                break;
+
+            case Order.EnemyTypes.Swarm:
+
+                if (_swarmSpawners.Count == 0)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < order._enemyAmount; i++)
+                {
+                    int randIndex = Random.Range(0, _swarmSpawners.Count);
+                    _swarmSpawners[randIndex].AcceptOrder(1);
+                }
+
+                break;
         }
-        else
-        {
-            Debug.LogWarning($"Trying to spawn in ${_roomID} with no spawners available!");
-        }
+
+        return true;
     }
 
     #endregion

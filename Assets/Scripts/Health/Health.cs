@@ -57,7 +57,6 @@ public class Health : MonoBehaviour
     /// </summary>
     protected virtual void Die()
     {
-        Debug.Log($"{this.transform} has died!");
     }
 
     #endregion

@@ -53,5 +53,32 @@ public class SmartMap : MonoBehaviour
         _activeRoom = room;
     }
 
+    public void AcceptSegment(Segment segment)
+    {
+        foreach (Order order in segment._orders)
+        {
+            if (_activeRoom.SmartSpawn(order))
+            {
+                continue;
+            }
+
+            bool roomFound = false;
+
+            foreach (Room room in _rooms)
+            {
+                if (room.SmartSpawn(order))
+                {
+                    roomFound = true;
+                    break;
+                }
+            }
+
+            if (!roomFound)
+            {
+                Debug.LogWarning("No rooms available to fulfill this segment's order!");
+            }
+        }
+    }
+
     #endregion
 }

@@ -16,8 +16,6 @@ public class PlayerHealth : Health
     public override void TakeDamage(float dmg)
     {
         base.TakeDamage(dmg);
-
-        Debug.Log(_currentHealth);
     }
 
     protected override void Heal(float heal)

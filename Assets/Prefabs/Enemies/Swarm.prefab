@@ -269,7 +269,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   _currentRoom: {fileID: 0}
-  _strikeDamage: 5
   _wallMask:
     serializedVersion: 2
     m_Bits: 11319
@@ -291,6 +290,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxHealth: 30
   _currentHealth: 30
+  _enemyType: 1
 --- !u!114 &7579260106337620847
 MonoBehaviour:
   m_ObjectHideFlags: 0
