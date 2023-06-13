@@ -18,9 +18,9 @@ MonoBehaviour:
       _enemyAmount: 2
     - _enemy: 1
       _enemyAmount: 3
-    _allowEarlySpawning: 0
+    _allowEarlySpawning: 1
   - _orders:
     - _enemy: 1
       _enemyAmount: 5
-    _allowEarlySpawning: 0
+    _allowEarlySpawning: 1
   _maxEnemiesSpawned: 3

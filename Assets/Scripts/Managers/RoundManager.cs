@@ -28,11 +28,26 @@ public class RoundManager : MonoBehaviour
     [Tooltip("The list of rounds that runs the game loop")]
     [SerializeField] private List<Round> _rounds;
 
+    // The current round
     private int _currentRound = 0;
+
+    // The current segment within the round
     private int _currentSegment = 0;
+
+    // The amount of total enemies remaining this round
     private int _totalEnemiesRemaining = 0;
+
+    // The total enemies that are spawned in the world
+    private int _totalEnemiesSpawned = 0;
+
+    // The number of enemies left in this segment
     private int _segmentEnemiesRemaining = 0;
+
+    // The timer for the in-between rounds sequence
     private float _inBetweenTimer = 0;
+
+    // The number of enemies left before early spawning
+    private int _spawningEarlyBuffer = 0;
 
 
     #endregion
@@ -63,6 +78,10 @@ public class RoundManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Changes the current state of the round with additonal logic
+    /// </summary>
+    /// <param name="newState">The new round state</param>
     public void ChangeRoundState(RoundState newState)
     {
         _roundState = newState;
@@ -71,6 +90,7 @@ public class RoundManager : MonoBehaviour
         {
             case RoundState.InRound:
 
+                // Loop the rounds, currently
                 if (_currentRound >= _rounds.Count)
                 {
                     _currentRound = 0;
@@ -114,6 +134,7 @@ public class RoundManager : MonoBehaviour
         {
             case RoundState.InRound:
 
+                // Overall round check
                 if (_totalEnemiesRemaining <= 0)
                 {
                     Debug.Log($"Round {_rounds[_currentRound]} over!");
@@ -123,6 +144,24 @@ public class RoundManager : MonoBehaviour
                     return;
                 }
 
+                // Early spawning block
+                if (_segmentEnemiesRemaining < _rounds[_currentRound]._maxEnemiesSpawned)
+                {
+                    if (_currentSegment + 1 < _rounds[_currentRound]._segments.Count)
+                    {
+                        if (_rounds[_currentRound]._segments[_currentSegment + 1]._allowEarlySpawning)
+                        {
+                            Debug.Log($"Starting spawning of segment {_currentSegment + 1} early!");
+
+                            _spawningEarlyBuffer = _segmentEnemiesRemaining;
+
+                            _currentSegment += 1;
+                            SpawnSegment();
+                        }
+                    }
+                }
+
+                // Segment check
                 if (_segmentEnemiesRemaining <= 0)
                 {
                     Debug.Log($"Segment {_currentSegment} of {_rounds[_currentRound]} over!");
@@ -148,21 +187,62 @@ public class RoundManager : MonoBehaviour
         }
     }
 
-    public RoundState GetGameState()
+    /// <summary>
+    /// Getter for current round state
+    /// </summary>
+    /// <returns>The round state</returns>
+    public RoundState GetRoundState()
     {
         return _roundState;
     }
 
+    /// <summary>
+    /// Called when an enemy dies, updates references
+    /// </summary>
+    /// <param name="enemyType">Type of enemy (currently unused)</param>
     public void RecordEnemyKill(Order.EnemyTypes enemyType)
     {
         _segmentEnemiesRemaining -= 1;
         _totalEnemiesRemaining -= 1;
+        _totalEnemiesSpawned -= 1;
+
+        // Keeps track of when the prior segment ends after early spawning
+        if (_spawningEarlyBuffer > 0)
+        {
+            _spawningEarlyBuffer -= 1;
+
+            if (_spawningEarlyBuffer <= 0)
+            {
+                Debug.Log($"Spawning early for segment {_currentSegment} has ended!");
+                Debug.Log($"Segment {_currentSegment - 1} of {_rounds[_currentRound]} over!");
+            }
+        }
     }
 
+    /// <summary>
+    /// Updates counters when a new enemy is spawned
+    /// </summary>
+    public void RecordEnemySpawn()
+    {
+        _totalEnemiesSpawned += 1;
+    }
+
+    /// <summary>
+    /// Send the current segment to the smartmap for spawning locations
+    /// </summary>
     public void SpawnSegment()
     {
-        _segmentEnemiesRemaining = _rounds[_currentRound]._segments[_currentSegment].GetTotalEnemies();
+        _segmentEnemiesRemaining += _rounds[_currentRound]._segments[_currentSegment].GetTotalEnemies();
         SmartMap.instance.AcceptSegment(_rounds[_currentRound]._segments[_currentSegment]);
+    }
+
+    /// <summary>
+    /// Determines whether there's too many enemies on the screen
+    /// </summary>
+    /// <returns>Whether more enemies can be spawned</returns>
+    public bool CanSpawn()
+    {
+        return _totalEnemiesSpawned < _rounds[_currentRound]._maxEnemiesSpawned;
     }
 
     #endregion

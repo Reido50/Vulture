@@ -21,6 +21,10 @@ public class Round : ScriptableObject
 
     #region Methods
 
+    /// <summary>
+    /// Getter for the total number of enemies across all segments
+    /// </summary>
+    /// <returns>Total number of enemies in a round</returns>
     public int GetTotalEnemies()
     {
         int total = 0;

@@ -50,9 +50,13 @@ public class SmartSpawner : MonoBehaviour
 
             if (_spawnTimer >= _spawnBuffer)
             {
-                _spawnBuffer = Random.Range(_maxSpawnBuffer / 2, _maxSpawnBuffer);
                 _spawnTimer = 0;
-                Spawn();
+                _spawnBuffer = Random.Range(_maxSpawnBuffer / 2, _maxSpawnBuffer);
+
+                if (RoundManager._instance.CanSpawn())
+                {
+                    Spawn();
+                }
             }
         }
     }
@@ -65,10 +69,15 @@ public class SmartSpawner : MonoBehaviour
         GameObject newEnemy = Instantiate(SelectEnemy(), transform.position, Quaternion.identity);
         newEnemy.transform.parent = this.transform;
 
+        RoundManager._instance.RecordEnemySpawn();
+
         _orderAmount -= 1;
     }
 
-
+    /// <summary>
+    /// Selects the enemy prefab based on the type
+    /// </summary>
+    /// <returns>Prefab</returns>
     public GameObject SelectEnemy()
     {
         switch (_enemyType)
@@ -86,6 +95,10 @@ public class SmartSpawner : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Adds numbers onto the order pile
+    /// </summary>
+    /// <param name="amount">The amount of enemies to be added to the queue</param>
     public void AcceptOrder(int amount)
     {
         _orderAmount += amount;

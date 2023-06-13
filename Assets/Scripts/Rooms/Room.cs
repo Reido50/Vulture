@@ -153,6 +153,11 @@ public class Room : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Picks the correct spawners to be activated based on the order
+    /// </summary>
+    /// <param name="order">The order to be spawned</param>
+    /// <returns>True if it was successful, else false</returns>
     public bool SmartSpawn(Order order)
     {
         switch (order._enemy)

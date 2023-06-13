@@ -53,6 +53,10 @@ public class SmartMap : MonoBehaviour
         _activeRoom = room;
     }
 
+    /// <summary>
+    /// Takes a segment and gives the spawning to the current active room
+    /// </summary>
+    /// <param name="segment">The current segment of the round</param>
     public void AcceptSegment(Segment segment)
     {
         foreach (Order order in segment._orders)
