@@ -46,6 +46,7 @@ public class PlayerGun : MonoBehaviour
     [SerializeField] private GameObject muzzleFlash, bulletHole;
     private RaycastHit hit;
     private InputManager input;
+    private UIManager ui;
 
     [Tooltip("Textbox being used for displaying ammo (temporary placeholder until we have a UI manager)")]
     [SerializeField] private TextMeshProUGUI text;
@@ -55,18 +56,13 @@ public class PlayerGun : MonoBehaviour
         bulletsLeft = magSize;
         readyToShoot = true;
         input = InputManager.instance;
+        ui = UIManager.instance;
     }
 
     private void Update()
     {
         UpdateInput();
-
-        // Set temporary ammo text
-        if(text != null)
-        {
-            text.SetText(bulletsLeft + " / " + magSize);
-        }
-
+        ui.UpdateAmmoText(bulletsLeft, magSize);
     }
 
     /// <summary>
