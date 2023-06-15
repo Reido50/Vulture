@@ -20,8 +20,13 @@ public class SmartSpawner : MonoBehaviour
     // Reference to the Room this belongs to
     private Room _parentRoom;
 
+    // The current number of enemies waiting to be spawned
     private int _orderAmount = 0;
+
+    // The time inbetween spawns
     private float _spawnBuffer = 0;
+
+    // The timer for the spawn buffer
     private float _spawnTimer = 0;
 
     #endregion

@@ -78,6 +78,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _roomID: TestRoom
+  _neighboringRooms: []
+  _neighboringSpawnOdds: 0.4
   _coverParent: {fileID: 4350653900447216614}
 --- !u!1 &4350653899486939533
 GameObject:

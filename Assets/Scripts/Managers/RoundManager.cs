@@ -242,7 +242,12 @@ public class RoundManager : MonoBehaviour
     /// <returns>Whether more enemies can be spawned</returns>
     public bool CanSpawn()
     {
-        return _totalEnemiesSpawned < _rounds[_currentRound]._maxEnemiesSpawned;
+        if (_currentRound < _rounds.Count)
+        {
+            return _totalEnemiesSpawned < _rounds[_currentRound]._maxEnemiesSpawned;
+        }
+
+        return false;
     }
 
     #endregion

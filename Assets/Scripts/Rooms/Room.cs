@@ -13,6 +13,12 @@ public class Room : MonoBehaviour
 
     [Header("Spawning")]
 
+    [Tooltip("Rooms that should be considered 'connected' to this room")]
+    [SerializeField] private List<Room> _neighboringRooms;
+
+    [Tooltip("The odds that an enemy will be spawned in a neighboring room")]
+    [Range(0, 1)]
+    [SerializeField] private float _neighboringSpawnOdds = 0.4f;
 
     [Header("Cover")]
 
@@ -160,40 +166,99 @@ public class Room : MonoBehaviour
     /// <returns>True if it was successful, else false</returns>
     public bool SmartSpawn(Order order)
     {
-        switch (order._enemy)
+        for (int i = 0; i < order._enemyAmount; i++)
         {
-            case Order.EnemyTypes.Soldier:
+            // Start by getting a neighboring room
+            Room neighborRoom = CheckNeighbors(order._enemy);
 
-                if (_soldierSpawners.Count == 0)
+            if (neighborRoom)
+            {
+                // RNG to see if enemy will spawn in neighboring room instead of player room
+                if (Random.Range(0f, 1f) <= _neighboringSpawnOdds)
                 {
+                    neighborRoom.CommandSpawn(order._enemy);
+                    continue;
+                }
+            }
+
+            // Try to spawn in player room. If failure, try spawning in neighbor
+            if (!CommandSpawn(order._enemy))
+            {
+                if (neighborRoom)
+                {
+                    neighborRoom.CommandSpawn(order._enemy);
+                }
+                else
+                {
+                    // Nowhere for the enemy to spawn, return false
                     return false;
                 }
-
-                for (int i = 0; i < order._enemyAmount; i++)
-                {
-                    int randIndex = Random.Range(0, _soldierSpawners.Count);
-                    _soldierSpawners[randIndex].AcceptOrder(1);
-                }
-
-                break;
-
-            case Order.EnemyTypes.Swarm:
-
-                if (_swarmSpawners.Count == 0)
-                {
-                    return false;
-                }
-
-                for (int i = 0; i < order._enemyAmount; i++)
-                {
-                    int randIndex = Random.Range(0, _swarmSpawners.Count);
-                    _swarmSpawners[randIndex].AcceptOrder(1);
-                }
-
-                break;
+            }
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Finds a possible neighboring room that could spawn an enemy
+    /// </summary>
+    /// <param name="_type">The type of enemy to be spawned</param>
+    /// <returns>A room if one fits, else null</returns>
+    public Room CheckNeighbors(Order.EnemyTypes _type)
+    {
+        List<Room> possibleRooms = new List<Room>();
+        foreach (Room room in _neighboringRooms)
+        {
+            if (room.CheckSpawnerCapacity(_type))
+            {
+                possibleRooms.Add(room);
+            }
+        }
+
+        if (possibleRooms.Count == 0)
+        {
+            return null;
+        }
+
+        // return a random room from the possible options
+        return possibleRooms[Random.Range(0, possibleRooms.Count)];
+    }
+
+    /// <summary>
+    /// Spawn one enemy based on the type from the available spawners
+    /// </summary>
+    /// <param name="_type">The type of enemy to be spawned</param>
+    /// <returns>True if spawned, else false</returns>
+    public bool CommandSpawn(Order.EnemyTypes _type)
+    {
+        List<SmartSpawner> spawners = _type == Order.EnemyTypes.Soldier ? _soldierSpawners : _swarmSpawners;
+
+        if (spawners.Count == 0)
+        {
+            return false;
+        }
+
+        spawners[Random.Range(0, spawners.Count)].AcceptOrder(1);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Checker to see if a room has that type of spawner available
+    /// </summary>
+    /// <param name="_type">The type of enemy that the spawner can handle</param>
+    /// <returns>True if the room has spawners, else false</returns>
+    public bool CheckSpawnerCapacity(Order.EnemyTypes _type)
+    {
+        switch (_type)
+        {
+            case Order.EnemyTypes.Soldier:
+                return _soldierSpawners.Count > 0;
+            case Order.EnemyTypes.Swarm:
+                return _swarmSpawners.Count > 0;
+        }
+
+        return false;
     }
 
     #endregion

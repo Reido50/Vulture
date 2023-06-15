@@ -24,8 +24,8 @@ public class Tracer : Enemy
 
     [Header("General Tracer Options")]
 
-    [Tooltip("The damage done by one strike")]
-    [SerializeField] private float _strikeDamage = 5f;
+    //[Tooltip("The damage done by one strike")]
+    //[SerializeField] private float _strikeDamage = 5f;
 
     [Tooltip("The time constraints of which a charge can be performed. X is bottom constraint, Y is top")]
     [SerializeField] private Vector2 _chargeTimeConstraints;
@@ -86,8 +86,8 @@ public class Tracer : Enemy
     // Is the enemy currently grounded?
     public bool _grounded = true;
 
-    // Was the enemy previously grounded when switching orientation?
-    private bool _previousGrounded = true;
+    //// Was the enemy previously grounded when switching orientation?
+    //private bool _previousGrounded = true;
 
     // The current odds of choosing a cover
     private float _swapOdds = 0.05f;
@@ -209,7 +209,7 @@ public class Tracer : Enemy
 
         if (swapRoll < _swapOdds)
         {
-            _previousGrounded = true;
+            // _previousGrounded = true;
             ChangeState(EnemyStates.Covering);
             return;
         }
@@ -273,7 +273,7 @@ public class Tracer : Enemy
 
         if (swapRoll < _swapOdds)
         {
-            _previousGrounded = false;
+            // _previousGrounded = false;
             ChangeState(EnemyStates.Covering);
             return;
         }
