@@ -45,7 +45,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0.17661981, g: 0.734177, b: 0.764151, a: 1}
-  m_Intensity: 10
+  m_Intensity: 6
   m_Range: 20
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -230,8 +230,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -334000983
   m_Radius: 0.5000001
-  m_Speed: 4
-  m_Acceleration: 10
+  m_Speed: 7
+  m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 360
   m_StoppingDistance: 0
@@ -261,7 +261,7 @@ MonoBehaviour:
   _sightMask:
     serializedVersion: 2
     m_Bits: 567
-  _slowWhenPlayerSpotted: 1
+  _slowWhenPlayerSpotted: 0
   _speedReductionPercentage: 0.5
   _proximitySpeedBoost: 1
   _speedBoostPercentage: 0.5

@@ -45,7 +45,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0.19048949, g: 0.3490566, b: 0.16958883, a: 1}
-  m_Intensity: 10
+  m_Intensity: 6
   m_Range: 20
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -230,8 +230,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5000001
-  m_Speed: 5
-  m_Acceleration: 10
+  m_Speed: 6
+  m_Acceleration: 5
   avoidancePriority: 50
   m_AngularSpeed: 360
   m_StoppingDistance: 0
@@ -294,6 +294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxHealth: 50
   _currentHealth: 50
+  _enemyType: 0
 --- !u!114 &5738036413460159365
 MonoBehaviour:
   m_ObjectHideFlags: 0
