@@ -49,6 +49,9 @@ public class RoundManager : MonoBehaviour
     // The number of enemies left before early spawning
     private int _spawningEarlyBuffer = 0;
 
+    // The overall current number of rounds
+    private int _totalCurrentRound = 1;
+
 
     #endregion
 
@@ -112,6 +115,8 @@ public class RoundManager : MonoBehaviour
                     Debug.LogWarning("Current round is missing segments!");
                 }
 
+                UIManager.instance.UpdateRound(_totalCurrentRound, _rounds[_currentRound].name);
+
                 SpawnSegment();
 
                 break;
@@ -119,6 +124,8 @@ public class RoundManager : MonoBehaviour
             case RoundState.InBetween:
 
                 _inBetweenTimer = _inBetweenLength;
+
+                UIManager.instance.UpdateRound(-1, "Prepare.");
 
                 break;
 
@@ -139,6 +146,7 @@ public class RoundManager : MonoBehaviour
                 {
                     Debug.Log($"Round {_rounds[_currentRound]} over!");
                     _currentRound++;
+                    _totalCurrentRound++;
                     ChangeRoundState(RoundState.InBetween);
 
                     return;

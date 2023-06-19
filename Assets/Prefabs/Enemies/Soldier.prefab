@@ -295,6 +295,8 @@ MonoBehaviour:
   _maxHealth: 50
   _currentHealth: 50
   _enemyType: 0
+  _damageNumber: {fileID: 495747941628052658, guid: a3ce85dd2c796db4b86983ac0b88a9a1,
+    type: 3}
 --- !u!114 &5738036413460159365
 MonoBehaviour:
   m_ObjectHideFlags: 0
