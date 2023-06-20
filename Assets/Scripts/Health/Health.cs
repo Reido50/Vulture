@@ -22,9 +22,9 @@ public class Health : MonoBehaviour
     /// Subtract damage from health and check for death
     /// </summary>
     /// <param name="dmg">The amount of damage done</param>
-    public virtual void TakeDamage(float dmg)
+    public virtual void TakeDamage(float dmg, float multiplier=1)
     {
-        _currentHealth -= dmg;
+        _currentHealth -= dmg * multiplier;
 
         if (_currentHealth <= 0f)
         {

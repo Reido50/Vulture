@@ -16,9 +16,9 @@ public class SoldierHealth : EnemyHealth
     /// Override for soldiers taking cover when hurt
     /// </summary>
     /// <param name="dmg">damage taken</param>
-    public override void TakeDamage(float dmg)
+    public override void TakeDamage(float dmg, float multiplier=1)
     {
-        base.TakeDamage(dmg);
+        base.TakeDamage(dmg, multiplier);
 
         if (_currentHealth <= (_maxHealth / 2) && _currentHealth > 0 && _soldier.GetState() != Enemy.EnemyStates.Covering)
         {

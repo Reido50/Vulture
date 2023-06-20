@@ -13,9 +13,9 @@ public class PlayerHealth : Health
         base.Die();
     }
 
-    public override void TakeDamage(float dmg)
+    public override void TakeDamage(float dmg, float multiplier)
     {
-        base.TakeDamage(dmg);
+        base.TakeDamage(dmg, multiplier);
     }
 
     protected override void Heal(float heal)

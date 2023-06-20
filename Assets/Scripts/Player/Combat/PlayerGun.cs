@@ -117,7 +117,8 @@ public class PlayerGun : MonoBehaviour
         {
             if (hit.collider.GetComponent<Health>())
             {
-                hit.collider.GetComponent<Health>().TakeDamage(damage);
+                float multiplier = hit.collider.GetComponent<EnemyHealth>().HitLocation(hit.point);
+                hit.collider.GetComponent<Health>().TakeDamage(damage, multiplier);
             }
         }
 

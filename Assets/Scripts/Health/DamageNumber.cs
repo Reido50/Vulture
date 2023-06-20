@@ -11,6 +11,15 @@ public class DamageNumber : MonoBehaviour
     [Header("Options")]
     [SerializeField] private float _timeTillDeath = 1f;
 
+    [Tooltip("The color for a lesser multiplier")]
+    [SerializeField] private Color _lesserMultiplier;
+
+    [Tooltip("The color for an equal multiplier")]
+    [SerializeField] private Color _equalMultiplier;
+
+    [Tooltip("The color for a greater multiplier")]
+    [SerializeField] private Color _greaterMultiplier;
+
     // Reference to the damage text
     private TextMeshProUGUI _damageText;
 
@@ -24,23 +33,33 @@ public class DamageNumber : MonoBehaviour
 
     #region Methods
 
-    private void Start()
-    {
-        _damageText = GetComponent<TextMeshProUGUI>();
-    }
-
     /// <summary>
     /// Initializes number with values and references
     /// </summary>
     /// <param name="damageAmount"></param>
-    public void Initialize(float damageAmount)
+    public void Initialize(float damageAmount, float multiplier)
     {
         transform.LookAt(Camera.main.transform);
         transform.Rotate(Vector3.up * 180);
 
+        _damageText = GetComponent<TextMeshProUGUI>();
+
         if (_damageText)
         {
-            _damageText.SetText($"{damageAmount}");
+            _damageText.SetText($"{damageAmount * multiplier}");
+
+            if (multiplier > 1)
+            {
+                _damageText.color = _greaterMultiplier;
+            }
+            else if (multiplier == 1)
+            {
+                _damageText.color = _equalMultiplier;
+            }
+            else
+            {
+                _damageText.color = _lesserMultiplier;
+            }
         }
 
         _initialized = true;
@@ -54,7 +73,7 @@ public class DamageNumber : MonoBehaviour
             if (_timer < _timeTillDeath)
             {
                 transform.position -= Vector3.up * Time.deltaTime;
-                transform.localScale -= transform.localScale * Time.deltaTime;
+                transform.localScale -= transform.localScale * (Time.deltaTime * 2);
 
                 _timer += Time.deltaTime;
 

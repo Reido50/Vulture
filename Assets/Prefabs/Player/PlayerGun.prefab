@@ -77,7 +77,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccd467e45284d4b42b5b073d63affd1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 40
+  damage: 10
   fireRate: 0.1
   spread: 0.02
   range: 100
