@@ -16,6 +16,8 @@ public class PlayerHealth : Health
     public override void TakeDamage(float dmg, float multiplier)
     {
         base.TakeDamage(dmg, multiplier);
+
+        UIManager.instance.UpdateHealthText(_currentHealth);
     }
 
     protected override void Heal(float heal)

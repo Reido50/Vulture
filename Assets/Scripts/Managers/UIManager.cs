@@ -12,6 +12,9 @@ public class UIManager : MonoBehaviour
     [Tooltip("The reference to the ammo counter text")]
     [SerializeField] private TextMeshProUGUI _ammoCounter;
 
+    [Tooltip("The reference to the health counter text")]
+    [SerializeField] private TextMeshProUGUI _healthCounter;
+
     [Tooltip("The reference to the current round text")]
     [SerializeField] private TextMeshProUGUI _currentRound;
 
@@ -42,7 +45,20 @@ public class UIManager : MonoBehaviour
     {
         if (_ammoCounter != null)
         {
-            _ammoCounter.SetText(bulletsLeft + " / " + magSize);
+            //_ammoCounter.SetText(bulletsLeft + " / " + magSize);
+            _ammoCounter.SetText($"{bulletsLeft}");
+        }
+    }
+
+    /// <summary>
+    /// Updates current health of player
+    /// </summary>
+    /// <param name="currentHealth">The current player health to be displayed</param>
+    public void UpdateHealthText(float currentHealth)
+    {
+        if (_healthCounter != null)
+        {
+            _healthCounter.SetText($"{currentHealth}");
         }
     }
 
