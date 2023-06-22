@@ -12,6 +12,7 @@ public class RoundManager : MonoBehaviour
     {
         InRound,
         InBetween,
+        Paused,
         InMenu,
     }
 
@@ -131,6 +132,9 @@ public class RoundManager : MonoBehaviour
 
             case RoundState.InMenu:
                 break;
+
+            case RoundState.Paused:
+                break;
         }
     }
 
@@ -192,6 +196,9 @@ public class RoundManager : MonoBehaviour
 
             case RoundState.InMenu:
                 break;
+
+            case RoundState.Paused:
+                break;
         }
     }
 
@@ -252,7 +259,7 @@ public class RoundManager : MonoBehaviour
     {
         if (_currentRound < _rounds.Count)
         {
-            return _totalEnemiesSpawned < _rounds[_currentRound]._maxEnemiesSpawned;
+            return _totalEnemiesSpawned < _rounds[_currentRound]._maxEnemiesSpawned && _roundState != RoundState.Paused;
         }
 
         return false;

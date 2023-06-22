@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 8169422812659762233}
   - component: {fileID: 8169422812659762232}
   - component: {fileID: 8169422812659762239}
+  - component: {fileID: -5541947033157386314}
   - component: {fileID: 8169422812659762228}
   - component: {fileID: 8169422812659762231}
   - component: {fileID: 743340607595286029}
@@ -220,6 +221,22 @@ CapsuleCollider:
   m_Height: 3.5
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0.41, z: 0.21}
+--- !u!54 &-5541947033157386314
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8169422812659762238}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!195 &8169422812659762228
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -230,10 +247,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: -334000983
   m_Radius: 0.5000001
-  m_Speed: 6
-  m_Acceleration: 8
+  m_Speed: 5
+  m_Acceleration: 12
   avoidancePriority: 50
-  m_AngularSpeed: 360
+  m_AngularSpeed: 500
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -256,7 +273,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _state: 0
   _playerInSight: 0
-  _inRangeProximity: 4
+  _inRangeProximity: 5
   _sightDistance: 30
   _sightMask:
     serializedVersion: 2
@@ -265,10 +282,12 @@ MonoBehaviour:
   _speedReductionPercentage: 0.5
   _proximitySpeedBoost: 1
   _speedBoostPercentage: 0.5
+  _initialUpwardBoost: 20
   _roomMask:
     serializedVersion: 2
     m_Bits: 1024
   _currentRoom: {fileID: 0}
+  testGrav: 0
   _wallMask:
     serializedVersion: 2
     m_Bits: 11319

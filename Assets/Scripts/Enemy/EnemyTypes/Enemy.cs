@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     {
         OutOfRange,
         InRange,
-        Stunned,
+        NoGrav,
         Covering
     }
 
@@ -50,6 +50,9 @@ public class Enemy : MonoBehaviour
     [Range(0, 1)]
     [SerializeField] protected float _speedBoostPercentage = 0.5f;
 
+    [Tooltip("The amount of upward force to be applied upon entering no gravity")]
+    [SerializeField] protected float _initialUpwardBoost = 5;
+
     [Header("Room")]
 
     [Tooltip("The layermask for room detection")]
@@ -63,6 +66,8 @@ public class Enemy : MonoBehaviour
 
     // Reference to this enemies weapon script
     protected EnemyWeapon _weapon;
+
+    protected Rigidbody _body;
 
     // Reference to the room this enemy is within
     public Room _currentRoom;
@@ -91,6 +96,12 @@ public class Enemy : MonoBehaviour
     {
         _state = newState;
 
+        if (_agent && _agent.enabled == false)
+        {
+            _agent.enabled = true;
+            _body.isKinematic = true;
+        }
+
         switch (newState)
         {
             case EnemyStates.OutOfRange:
@@ -111,7 +122,17 @@ public class Enemy : MonoBehaviour
 
                 _mutable = true;
                 break;
-            case EnemyStates.Stunned:
+            case EnemyStates.NoGrav:
+
+                // Turn off navmesh when floating
+                _agent.enabled = false;
+
+                // Turn on rigidbody
+                _body.isKinematic = false;
+
+                // Add initial upward force
+                _body.AddForce(transform.up * _initialUpwardBoost);
+
                 _mutable = false;
                 break;
             case EnemyStates.Covering:
@@ -126,6 +147,7 @@ public class Enemy : MonoBehaviour
         _state = EnemyStates.OutOfRange;
         _agent = GetComponent<NavMeshAgent>();
         _weapon = GetComponent<EnemyWeapon>();
+        _body = GetComponent<Rigidbody>();
 
         _baseSpeed = _agent.speed;
 
@@ -169,7 +191,8 @@ public class Enemy : MonoBehaviour
                     }
 
                     break;
-                case EnemyStates.Stunned:
+                case EnemyStates.NoGrav:
+
                     break;
                 case EnemyStates.Covering:
                     CheckProximity();
@@ -218,7 +241,18 @@ public class Enemy : MonoBehaviour
     /// </summary>
     protected virtual void CheckProximity()
     {
-        switch(_state)
+        // Depressurize check
+        if (_currentRoom != null)
+        {
+            if (_currentRoom._depressurized)
+            {
+                ChangeState(EnemyStates.NoGrav);
+                Debug.Log("WOOOOOOOOOO");
+                return;
+            }
+        }
+
+        switch (_state)
         {
             case EnemyStates.OutOfRange:
 

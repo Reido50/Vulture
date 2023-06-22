@@ -50,6 +50,34 @@ public class SmartMap : MonoBehaviour
     /// <param name="room">Reference to the active room</param>
     public void SetActiveRoom(Room room)
     {
+        if (_activeRoom != null)
+        {
+            Vector2 backlog = _activeRoom.Shutdown();
+
+            Segment backlogSegment = new Segment();
+            backlogSegment._orders = new List<Order>();
+            
+            if (backlog.x != 0)
+            {
+                Order newOrder = new Order();
+                newOrder._enemy = Order.EnemyTypes.Soldier;
+                newOrder._enemyAmount = (int)backlog.x;
+
+                backlogSegment._orders.Add(newOrder);
+            }
+
+            if (backlog.y != 0)
+            {
+                Order newOrder = new Order();
+                newOrder._enemy = Order.EnemyTypes.Swarm;
+                newOrder._enemyAmount = (int)backlog.y;
+
+                backlogSegment._orders.Add(newOrder);
+            }
+
+            AcceptSegment(backlogSegment);
+        }
+
         _activeRoom = room;
     }
 

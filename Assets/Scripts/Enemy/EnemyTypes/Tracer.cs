@@ -136,7 +136,7 @@ public class Tracer : Enemy
             case EnemyStates.InRange:
 
                 break;
-            case EnemyStates.Stunned:
+            case EnemyStates.NoGrav:
                 break;
             case EnemyStates.Covering:
 
@@ -177,7 +177,7 @@ public class Tracer : Enemy
                 break;
             case EnemyStates.InRange:
                 break;
-            case EnemyStates.Stunned:
+            case EnemyStates.NoGrav:
                 break;
             case EnemyStates.Covering:
 

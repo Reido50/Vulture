@@ -34,6 +34,10 @@ public class Room : MonoBehaviour
     // The list of all possible spawners
     private List<SmartSpawner> _soldierSpawners = new List<SmartSpawner>();
 
+    [Header("Environment")]
+
+    [Tooltip("Is the room currently in low grav?")]
+    public bool _depressurized = false;
 
     // The list of all possible spawners
     private List<SmartSpawner> _swarmSpawners = new List<SmartSpawner>();
@@ -259,6 +263,23 @@ public class Room : MonoBehaviour
         }
 
         return false;
+    }
+
+    public Vector2 Shutdown()
+    {
+        Vector2 carryOn = Vector2.zero;
+
+        foreach (SmartSpawner spawner in _soldierSpawners)
+        {
+            carryOn.x += spawner.ClearOrderRemaining();
+        }
+
+        foreach (SmartSpawner spawner in _swarmSpawners)
+        {
+            carryOn.y += spawner.ClearOrderRemaining();
+        }
+
+        return carryOn;
     }
 
     #endregion

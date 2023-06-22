@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 3115551479759441372}
   - component: {fileID: 3115551479759441373}
   - component: {fileID: 3115551479759441370}
+  - component: {fileID: 4538245968750176240}
   - component: {fileID: 3115551479759441361}
   - component: {fileID: 3115551479759441360}
   - component: {fileID: 8215323132662823611}
@@ -220,6 +221,22 @@ CapsuleCollider:
   m_Height: 3.5
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0.42, z: 0.18}
+--- !u!54 &4538245968750176240
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3115551479759441371}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!195 &3115551479759441361
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -265,10 +282,12 @@ MonoBehaviour:
   _speedReductionPercentage: 0.5
   _proximitySpeedBoost: 1
   _speedBoostPercentage: 0.25
+  _initialUpwardBoost: 5
   _roomMask:
     serializedVersion: 2
     m_Bits: 1024
   _currentRoom: {fileID: 0}
+  testGrav: 0
   _inRangeAction: 0
   _closestDesiredRange: 10
   maxStrafeDistance: 10

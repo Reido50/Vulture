@@ -67,7 +67,7 @@ public class Swarm : Enemy
                 transform.LookAt(_playerRef);
 
                 break;
-            case EnemyStates.Stunned:
+            case EnemyStates.NoGrav:
                 break;
             case EnemyStates.Covering:
                 break;
@@ -76,14 +76,14 @@ public class Swarm : Enemy
 
     public override void ChangeState(EnemyStates newState)
     {
-        base.ChangeState(newState);
-
         // Resets (clears out) the path of the navmesh for every change
-        if (_agent != null)
+        if (_agent != null && _agent.enabled)
         {
             _agent.ResetPath();
             _target = null;
         }
+
+        base.ChangeState(newState);
 
         switch (_state)
         {
@@ -108,7 +108,7 @@ public class Swarm : Enemy
                 }
 
                 break;
-            case EnemyStates.Stunned:
+            case EnemyStates.NoGrav:
                 break;
             case EnemyStates.Covering:
                 break;

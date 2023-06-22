@@ -98,7 +98,7 @@ public class Patrol : Enemy
                 }
 
                 break;
-            case EnemyStates.Stunned:
+            case EnemyStates.NoGrav:
                 break;
             case EnemyStates.Covering:
                 break;
@@ -163,7 +163,7 @@ public class Patrol : Enemy
 
                 break;
 
-            case EnemyStates.Stunned:
+            case EnemyStates.NoGrav:
 
                 break;
 

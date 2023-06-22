@@ -109,5 +109,12 @@ public class SmartSpawner : MonoBehaviour
         _orderAmount += amount;
     }
 
+    public int ClearOrderRemaining()
+    {
+        int remaining = _orderAmount;
+        _orderAmount = 0;
+        return remaining;
+    }
+
     #endregion
 }

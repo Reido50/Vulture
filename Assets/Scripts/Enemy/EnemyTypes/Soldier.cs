@@ -95,10 +95,8 @@ public class Soldier : Enemy
     /// <param name="newState">The new state of this enemy</param>
     public override void ChangeState(EnemyStates newState)
     {
-        base.ChangeState(newState);
-
         // Resets (clears out) the path of the navmesh for every change
-        if (_agent != null)
+        if (_agent != null && _agent.enabled)
         {
             _agent.ResetPath();
             _target = null;
@@ -108,6 +106,8 @@ public class Soldier : Enemy
             _actionTimer = 0;
             _actionLimit = 0;
         }
+
+        base.ChangeState(newState);
 
         switch (newState)
         {
@@ -134,7 +134,8 @@ public class Soldier : Enemy
 
                 break;
 
-            case EnemyStates.Stunned:
+            case EnemyStates.NoGrav:
+
                 break;
             case EnemyStates.Covering:
 
@@ -228,7 +229,10 @@ public class Soldier : Enemy
                     ThinkInRange();
 
                     break;
-                case EnemyStates.Stunned:
+                case EnemyStates.NoGrav:
+
+                    transform.LookAt(_playerRef);
+
                     break;
                 case EnemyStates.Covering:
 
