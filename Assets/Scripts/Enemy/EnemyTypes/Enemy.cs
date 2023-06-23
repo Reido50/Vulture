@@ -50,13 +50,20 @@ public class Enemy : MonoBehaviour
     [Range(0, 1)]
     [SerializeField] protected float _speedBoostPercentage = 0.5f;
 
-    [Tooltip("The amount of upward force to be applied upon entering no gravity")]
-    [SerializeField] protected float _initialUpwardBoost = 5;
-
     [Header("Room")]
 
     [Tooltip("The layermask for room detection")]
     [SerializeField] protected LayerMask _roomMask;
+
+    [Tooltip("The speed in which an enemy will be pulled out of the room")]
+    [SerializeField] protected float _pullSpeed = 300f;
+
+    [Tooltip("The slowdown multiplier after an enemy is pulled out")]
+    [Range(0, 1)]
+    [SerializeField] protected float _pullSlowdownMultiplier = 0.5f;
+
+    [Tooltip("The time after sucked until destroy")]
+    [SerializeField] protected float _timeTilDeathAfterSuck = 5f;
 
     // Reference to the player GameObject
     protected Transform _playerRef;
@@ -83,6 +90,11 @@ public class Enemy : MonoBehaviour
 
     // Updated distance from player
     protected float _distanceFromPlayer = 0;
+
+    // An integer check for aiding the suck process
+    private int _pullChecks = 0;
+
+    private float _pullTimer = 0f;
 
     #endregion
 
@@ -130,8 +142,14 @@ public class Enemy : MonoBehaviour
                 // Turn on rigidbody
                 _body.isKinematic = false;
 
-                // Add initial upward force
-                _body.AddForce(transform.up * _initialUpwardBoost);
+                gameObject.layer = LayerMask.NameToLayer("Sucked");
+
+                // Set velocity toward the window
+                if (_currentRoom.GetWindow() != null)
+                {
+                    Vector3 targetDir = _currentRoom.GetWindow().transform.position - transform.position;
+                    _body.velocity = targetDir * _pullSpeed * Time.deltaTime;
+                }
 
                 _mutable = false;
                 break;
@@ -193,6 +211,14 @@ public class Enemy : MonoBehaviour
                     break;
                 case EnemyStates.NoGrav:
 
+                    if (_pullTimer > _timeTilDeathAfterSuck)
+                    {
+                        _pullTimer = -1000f;
+                        GetComponent<EnemyHealth>().TakeDamage(1000, -1);
+                    }
+
+                    _pullTimer += Time.deltaTime;
+
                     break;
                 case EnemyStates.Covering:
                     CheckProximity();
@@ -244,10 +270,9 @@ public class Enemy : MonoBehaviour
         // Depressurize check
         if (_currentRoom != null)
         {
-            if (_currentRoom._depressurized)
+            if (_currentRoom.GetPressureStatus())
             {
                 ChangeState(EnemyStates.NoGrav);
-                Debug.Log("WOOOOOOOOOO");
                 return;
             }
         }
@@ -318,6 +343,17 @@ public class Enemy : MonoBehaviour
         if (other.CompareTag("Room"))
         {
             _currentRoom = null;
+
+            if (_state == EnemyStates.NoGrav)
+            {
+                _pullChecks++;
+
+                if (_pullChecks > 1)
+                {
+                    _body.velocity *= _pullSlowdownMultiplier;
+                    _pullTimer = 0;
+                }
+            }
         }
     }
 

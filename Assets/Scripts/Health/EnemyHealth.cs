@@ -21,8 +21,6 @@ public class EnemyHealth : Health
     /// <param name="dmg">The amount of damage taken</param>
     public override void TakeDamage(float dmg, float multiplier=1)
     {
-        base.TakeDamage(dmg, multiplier);
-
         if (_damageNumber)
         {
             GameObject dmgNumber = Instantiate(_damageNumber);
@@ -30,6 +28,10 @@ public class EnemyHealth : Health
             dmgNumber.transform.position = transform.position + new Vector3(Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), Random.Range(0.5f, 1f));
             dmgNumber.GetComponent<DamageNumber>().Initialize(dmg, multiplier);
         }
+
+        if (multiplier == -1) multiplier *= -1;
+
+        base.TakeDamage(dmg, multiplier);
     }
 
     /// <summary>

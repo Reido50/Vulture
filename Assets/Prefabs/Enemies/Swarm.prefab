@@ -282,12 +282,13 @@ MonoBehaviour:
   _speedReductionPercentage: 0.5
   _proximitySpeedBoost: 1
   _speedBoostPercentage: 0.5
-  _initialUpwardBoost: 20
   _roomMask:
     serializedVersion: 2
     m_Bits: 1024
+  _pullSpeed: 250
+  _pullSlowdownMultiplier: 0.7
+  _timeTilDeathAfterSuck: 5
   _currentRoom: {fileID: 0}
-  testGrav: 0
   _wallMask:
     serializedVersion: 2
     m_Bits: 11319

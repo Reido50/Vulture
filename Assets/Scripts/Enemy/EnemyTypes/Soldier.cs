@@ -136,6 +136,11 @@ public class Soldier : Enemy
 
             case EnemyStates.NoGrav:
 
+                if (_weapon)
+                {
+                    _weapon.ToggleFiring(false);
+                }
+
                 break;
             case EnemyStates.Covering:
 
@@ -230,8 +235,6 @@ public class Soldier : Enemy
 
                     break;
                 case EnemyStates.NoGrav:
-
-                    transform.LookAt(_playerRef);
 
                     break;
                 case EnemyStates.Covering:

@@ -36,14 +36,23 @@ public class Room : MonoBehaviour
 
     [Header("Environment")]
 
-    [Tooltip("Is the room currently in low grav?")]
-    public bool _depressurized = false;
+    [Tooltip("The amount of time the room will remain depressurized")]
+    [SerializeField] private float _depressurizeTime = 15f;
+
+    // Reference to the breakable window
+    private Window _window;
+
+    // Is the room currently depressurized?
+    private bool _depressurized = false;
 
     // The list of all possible spawners
     private List<SmartSpawner> _swarmSpawners = new List<SmartSpawner>();
 
     // Is the player currently inside this room?
     private bool _playerInside = false;
+
+    // The timer for the depressurize countdown
+    private float _depressureTimer = 0;
 
     #endregion
 
@@ -72,6 +81,32 @@ public class Room : MonoBehaviour
             else
             {
                 _swarmSpawners.Add(spawner);
+            }
+        }
+
+        if (GetComponentInChildren<Window>())
+        {
+            _window = GetComponentInChildren<Window>();
+        }
+        else
+        {
+            Debug.LogWarning("This room is missing a depressurization window!");
+        }
+    }
+
+    private void Update()
+    {
+        if (_depressurized && _window != null)
+        {
+            // Timer for the initial depressurization suck
+            _depressureTimer += Time.deltaTime;
+
+            if (_depressureTimer > _depressurizeTime)
+            {
+                _depressurized = false;
+                _depressureTimer = 0;
+
+                _window.Lock();
             }
         }
     }
@@ -265,6 +300,10 @@ public class Room : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Tells the spawners in this room to shut down
+    /// </summary>
+    /// <returns>The remaining enemies to be spawned in this room</returns>
     public Vector2 Shutdown()
     {
         Vector2 carryOn = Vector2.zero;
@@ -280,6 +319,32 @@ public class Room : MonoBehaviour
         }
 
         return carryOn;
+    }
+
+    /// <summary>
+    /// Getter for the window
+    /// </summary>
+    /// <returns>Window reference</returns>
+    public Window GetWindow()
+    {
+        return _window;
+    }
+
+    /// <summary>
+    /// Toggles the depressurization state
+    /// </summary>
+    public void Depressurize()
+    {
+        _depressurized = true;
+    }
+
+    /// <summary>
+    /// Getter for the depressurization status
+    /// </summary>
+    /// <returns>Is the room depressurized?</returns>
+    public bool GetPressureStatus()
+    {
+        return _depressurized;
     }
 
     #endregion
