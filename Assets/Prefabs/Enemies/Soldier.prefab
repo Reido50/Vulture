@@ -285,7 +285,7 @@ MonoBehaviour:
   _roomMask:
     serializedVersion: 2
     m_Bits: 1024
-  _pullSpeed: 300
+  _pullSpeed: 150
   _pullSlowdownMultiplier: 0.7
   _timeTilDeathAfterSuck: 5
   _currentRoom: {fileID: 0}
