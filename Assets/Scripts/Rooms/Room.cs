@@ -204,9 +204,9 @@ public class Room : MonoBehaviour
     /// </summary>
     /// <param name="order">The order to be spawned</param>
     /// <returns>True if it was successful, else false</returns>
-    public bool SmartSpawn(Order order)
+    public bool SmartSpawn(Order order, int multiplier)
     {
-        for (int i = 0; i < order._enemyAmount; i++)
+        for (int i = 0; i < order._enemyAmount * multiplier; i++)
         {
             // Start by getting a neighboring room
             Room neighborRoom = CheckNeighbors(order._enemy);

@@ -75,7 +75,7 @@ public class SmartMap : MonoBehaviour
                 backlogSegment._orders.Add(newOrder);
             }
 
-            AcceptSegment(backlogSegment);
+            AcceptSegment(backlogSegment, 1);
         }
 
         _activeRoom = room;
@@ -85,11 +85,11 @@ public class SmartMap : MonoBehaviour
     /// Takes a segment and gives the spawning to the current active room
     /// </summary>
     /// <param name="segment">The current segment of the round</param>
-    public void AcceptSegment(Segment segment)
+    public void AcceptSegment(Segment segment, int multiplier)
     {
         foreach (Order order in segment._orders)
         {
-            if (_activeRoom.SmartSpawn(order))
+            if (_activeRoom.SmartSpawn(order, multiplier))
             {
                 continue;
             }
@@ -98,7 +98,7 @@ public class SmartMap : MonoBehaviour
 
             foreach (Room room in _rooms)
             {
-                if (room.SmartSpawn(order))
+                if (room.SmartSpawn(order, multiplier))
                 {
                     roomFound = true;
                     break;

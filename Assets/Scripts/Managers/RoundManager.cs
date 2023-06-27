@@ -53,6 +53,8 @@ public class RoundManager : MonoBehaviour
     // The overall current number of rounds
     private int _totalCurrentRound = 1;
 
+    private int _currentLoop = 1;
+
 
     #endregion
 
@@ -98,11 +100,12 @@ public class RoundManager : MonoBehaviour
                 if (_currentRound >= _rounds.Count)
                 {
                     _currentRound = 0;
+                    _currentLoop++;
                     Debug.Log("Ran out of rounds! Restarting the sequence...");
                 }
 
                 // Calculate the total number of enemies this round
-                _totalEnemiesRemaining = _rounds[_currentRound].GetTotalEnemies();
+                _totalEnemiesRemaining = _rounds[_currentRound].GetTotalEnemies() * _currentLoop;
 
                 Debug.Log($"Current Round: {_rounds[_currentRound].name}");
 
@@ -116,7 +119,7 @@ public class RoundManager : MonoBehaviour
                     Debug.LogWarning("Current round is missing segments!");
                 }
 
-                UIManager.instance.UpdateRound(_totalCurrentRound, _rounds[_currentRound].name);
+                UIManager.instance.UpdateRound(_totalCurrentRound, _rounds[_currentRound].name, _currentLoop);
 
                 SpawnSegment();
 
@@ -126,7 +129,7 @@ public class RoundManager : MonoBehaviour
 
                 _inBetweenTimer = _inBetweenLength;
 
-                UIManager.instance.UpdateRound(-1, "Prepare.");
+                UIManager.instance.UpdateRound(-1, "Prepare.", -1);
 
                 break;
 
@@ -247,8 +250,8 @@ public class RoundManager : MonoBehaviour
     /// </summary>
     public void SpawnSegment()
     {
-        _segmentEnemiesRemaining += _rounds[_currentRound]._segments[_currentSegment].GetTotalEnemies();
-        SmartMap.instance.AcceptSegment(_rounds[_currentRound]._segments[_currentSegment]);
+        _segmentEnemiesRemaining += _rounds[_currentRound]._segments[_currentSegment].GetTotalEnemies() * _currentLoop;
+        SmartMap.instance.AcceptSegment(_rounds[_currentRound]._segments[_currentSegment], _currentLoop);
     }
 
     /// <summary>
@@ -259,7 +262,7 @@ public class RoundManager : MonoBehaviour
     {
         if (_currentRound < _rounds.Count)
         {
-            return _totalEnemiesSpawned < _rounds[_currentRound]._maxEnemiesSpawned && _roundState != RoundState.Paused;
+            return _totalEnemiesSpawned < (_rounds[_currentRound]._maxEnemiesSpawned * _currentLoop) && _roundState != RoundState.Paused;
         }
 
         return false;
