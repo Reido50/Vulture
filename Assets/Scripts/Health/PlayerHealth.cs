@@ -11,6 +11,11 @@ public class PlayerHealth : Health
     protected override void Die()
     {
         base.Die();
+
+        if (GameManager._instance)
+        {
+            GameManager._instance.LoseGame();
+        }
     }
 
     public override void TakeDamage(float dmg, float multiplier)

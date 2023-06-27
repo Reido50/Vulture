@@ -43,6 +43,14 @@ public class UIManager : MonoBehaviour
     [Tooltip("The reference to the world space canvas")]
     public Canvas _worldSpaceCanvas;
 
+    [Header("Pause References")]
+
+    [Tooltip("The reference to the continue button")]
+    [SerializeField] private GameObject _continueButton;
+
+    [Tooltip("The reference to the settings button")]
+    [SerializeField] private GameObject _settingsButton;
+
     void Awake()
     {
         if (instance == null)
@@ -121,10 +129,15 @@ public class UIManager : MonoBehaviour
                 break;
 
             case UIType.Pause:
+                _continueButton.SetActive(true);
+                _settingsButton.SetActive(true);
                 _pauseUIParent.SetActive(true);
                 break;
 
             case UIType.End:
+                _continueButton.SetActive(false);
+                _settingsButton.SetActive(false);
+                _pauseUIParent.SetActive(true);
                 break;
 
             case UIType.Shop:

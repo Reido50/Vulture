@@ -16,6 +16,12 @@ public class GameManager : MonoBehaviour
     // Is the game currently paused?
     private bool _isPaused = false;
 
+    private bool _isLowGrav = false;
+
+    private int _brokenCount = 0;
+
+    public delegate void GravChange();
+    public static event GravChange OnLowGrav;
 
     #endregion
 
@@ -41,6 +47,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ToggleGravity(bool toLow)
+    {
+        if (toLow)
+        {
+            _brokenCount++;
+
+            if (_brokenCount == 1)
+            {
+                _isLowGrav = true;
+                OnLowGrav();
+            }
+        }
+        else
+        {
+            _brokenCount--;
+
+            if (_brokenCount <= 0)
+            {
+                _isLowGrav = false;
+                OnLowGrav();
+            }
+        }
+    }
+
     /// <summary>
     /// Getter for player transform reference
     /// </summary>
@@ -60,6 +90,13 @@ public class GameManager : MonoBehaviour
         Time.timeScale = _isPaused ? 0 : 1;
 
         UIManager.instance.ToggleOnScreenUI(_isPaused ? UIManager.UIType.Pause : UIManager.UIType.Game);
+    }
+
+    public void LoseGame()
+    {
+        _isPaused = true;
+        Time.timeScale = 0;
+        UIManager.instance.ToggleOnScreenUI(UIManager.UIType.End);
     }
 
     /// <summary>

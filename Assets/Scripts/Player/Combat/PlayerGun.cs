@@ -126,6 +126,11 @@ public class PlayerGun : MonoBehaviour
 
                 hit.collider.GetComponent<Health>().TakeDamage(damage, multiplier);
             }
+
+            if (hit.collider.GetComponent<Prop>())
+            {
+                hit.collider.GetComponent<Prop>().Pushed(direction);
+            }
         }
 
         // Add camera shake call here
