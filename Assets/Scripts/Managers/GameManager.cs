@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class GameManager : MonoBehaviour
 
     // Reference to the player transform
     private Transform _playerTransform;
+
+    // Is the game currently paused?
+    private bool _isPaused = false;
 
 
     #endregion
@@ -44,6 +48,35 @@ public class GameManager : MonoBehaviour
     public Transform GetPlayerReference()
     {
         return _playerTransform;
+    }
+
+    /// <summary>
+    /// Toggles the pause menu on and off
+    /// </summary>
+    public void TogglePause()
+    {
+        _isPaused = !_isPaused;
+
+        Time.timeScale = _isPaused ? 0 : 1;
+
+        UIManager.instance.ToggleOnScreenUI(_isPaused ? UIManager.UIType.Pause : UIManager.UIType.Game);
+    }
+
+    /// <summary>
+    /// Restarts the game
+    /// </summary>
+    public void Restart()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    /// <summary>
+    /// Quits the application
+    /// </summary>
+    public void Quit()
+    {
+        Application.Quit();
     }
 
     #endregion

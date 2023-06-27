@@ -7,7 +7,26 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
 
-    [Header("References")]
+    public enum UIType
+    {
+        Game,
+        Pause,
+        End,
+        Shop
+    }
+
+    // The current UI in effect
+    private UIType _currentUI = UIType.Game;
+
+    [Header("Parent References")]
+
+    [Tooltip("The reference to the game UI parent")]
+    [SerializeField] private GameObject _gameUIParent;
+
+    [Tooltip("The reference to the pause UI parent")]
+    [SerializeField] private GameObject _pauseUIParent;
+
+    [Header("Game References")]
 
     [Tooltip("The reference to the ammo counter text")]
     [SerializeField] private TextMeshProUGUI _ammoCounter;
@@ -85,6 +104,37 @@ public class UIManager : MonoBehaviour
         {
             _objectiveText.SetText(roundName);
         }
+    }
+
+    public void ToggleOnScreenUI(UIType newType)
+    {
+        // Toggle off all prior UI
+        _gameUIParent.SetActive(false);
+        _pauseUIParent.SetActive(false);
+
+        _currentUI = newType;
+
+        switch (newType)
+        {
+            case UIType.Game:
+                _gameUIParent.SetActive(true);
+                break;
+
+            case UIType.Pause:
+                _pauseUIParent.SetActive(true);
+                break;
+
+            case UIType.End:
+                break;
+
+            case UIType.Shop:
+                break;
+        }
+    }
+
+    public void Continue()
+    {
+        ToggleOnScreenUI(UIType.Game);
     }
 
 }
