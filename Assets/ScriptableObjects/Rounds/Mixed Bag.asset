@@ -17,10 +17,12 @@ MonoBehaviour:
     - _enemy: 0
       _enemyAmount: 5
     - _enemy: 1
-      _enemyAmount: 10
+      _enemyAmount: 5
     _allowEarlySpawning: 1
   - _orders:
+    - _enemy: 0
+      _enemyAmount: 8
     - _enemy: 1
-      _enemyAmount: 15
-    _allowEarlySpawning: 1
+      _enemyAmount: 8
+    _allowEarlySpawning: 0
   _maxEnemiesSpawned: 10

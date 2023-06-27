@@ -15,14 +15,10 @@ MonoBehaviour:
   _segments:
   - _orders:
     - _enemy: 0
-      _enemyAmount: 20
-    - _enemy: 1
-      _enemyAmount: 5
+      _enemyAmount: 6
     _allowEarlySpawning: 0
   - _orders:
     - _enemy: 0
-      _enemyAmount: 15
-    - _enemy: 1
       _enemyAmount: 10
     _allowEarlySpawning: 1
-  _maxEnemiesSpawned: 15
+  _maxEnemiesSpawned: 4
