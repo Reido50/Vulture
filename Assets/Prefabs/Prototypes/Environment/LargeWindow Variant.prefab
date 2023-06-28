@@ -1952,4 +1952,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c026fa79f8d05e4ca82f963a9edd819, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _brokenMaterial: {fileID: 2100000, guid: eb8757ef46164054b960173effadbedc, type: 2}
   _lockedMaterial: {fileID: 2100000, guid: e6ff79bc5c3351c46b5fe700f4b12559, type: 2}

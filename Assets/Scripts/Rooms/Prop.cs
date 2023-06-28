@@ -15,6 +15,9 @@ public class Prop : MonoBehaviour
     [Tooltip("The amount of force this prop will take when shot")]
     [SerializeField] private float _shotForce = 100;
 
+    [Tooltip("The speed this prop must be going to damage enemies")]
+    [SerializeField] private float _damageSpeed = 5;
+
     // Reference to this rigidbody
     private Rigidbody _body;
 
@@ -65,6 +68,14 @@ public class Prop : MonoBehaviour
     public void Pushed(Vector3 dir)
     {
         _body.AddForce(dir * _shotForce);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.GetComponent<EnemyHealth>() && _body.velocity.sqrMagnitude >= _damageSpeed)
+        {
+            collision.transform.GetComponent<EnemyHealth>().TakeDamage(_body.velocity.sqrMagnitude - _damageSpeed);
+        }
     }
 
     #endregion

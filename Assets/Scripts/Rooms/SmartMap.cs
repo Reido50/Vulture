@@ -112,5 +112,34 @@ public class SmartMap : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Fixes a certain amount of windows
+    /// </summary>
+    /// <param name="fixAll">Should all of the windows be fixed?</param>
+    /// <param name="num">The number of windows to be fixed</param>
+    public void FixWindows(bool fixAll, int num = 1)
+    {
+        int counter = 0;
+
+        foreach (Room room in _rooms)
+        {
+            if (room.GetWindow())
+            {
+                if (room.GetWindow().Lock())
+                {
+                    counter++;
+                }
+            }
+
+            if (!fixAll)
+            {
+                if (counter >= num)
+                {
+                    return;
+                }
+            }
+        }
+    }
+
     #endregion
 }

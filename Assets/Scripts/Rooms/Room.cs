@@ -106,8 +106,7 @@ public class Room : MonoBehaviour
                 _depressurized = false;
                 _depressureTimer = 0;
 
-                GameManager._instance.ToggleGravity(false);
-                _window.Lock();
+                _window.Pressurize();
             }
         }
     }

@@ -24,6 +24,9 @@ public class RoundManager : MonoBehaviour
     [Tooltip("The amount of time inbetween rounds")]
     [SerializeField] private float _inBetweenLength = 15;
 
+    [Tooltip("Should we fix windows in-between rounds?")]
+    [SerializeField] private bool _windowFixPerRound = true;
+
     [Header("References")]
 
     [Tooltip("The list of rounds that runs the game loop")]
@@ -130,6 +133,11 @@ public class RoundManager : MonoBehaviour
                 _inBetweenTimer = _inBetweenLength;
 
                 UIManager.instance.UpdateRound(-1, "Prepare.", -1);
+
+                if (_windowFixPerRound)
+                {
+                    SmartMap.instance.FixWindows(false, 1);
+                }
 
                 break;
 

@@ -25,8 +25,10 @@ public class CanisterHealth : Health
         base.Die();
 
         // If canister is broken, break the window
-        _window.Break();
-        Destroy(this.gameObject);
+        _window.Depressurize();
+
+        Heal(100);
+        gameObject.SetActive(false);
     }
 
     #endregion
