@@ -137,7 +137,7 @@ public class PlayerGun : MonoBehaviour
 
         // VFX Spawning
         Instantiate(bulletHole, hit.point, Quaternion.LookRotation(-hit.normal, transform.up));
-        Instantiate(muzzleFlash, attackPoint.position, Quaternion.identity);
+        Instantiate(muzzleFlash, attackPoint.position, Quaternion.identity, transform);
 
         bulletsLeft--;
         bulletsShot--;

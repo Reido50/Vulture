@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float sprintSpeed;
     [Tooltip("Sliding speed for the player")]
     [SerializeField] private float slideSpeed;
+    [Tooltip("Wall run speed for the player")]
+    [SerializeField] private float wallRunSpeed;
 
     [Tooltip("Intended speed for the player to be moving at")]
     private float desiredMoveSpeed;
@@ -34,10 +36,12 @@ public class PlayerController : MonoBehaviour
         sprinting,
         crouching,
         sliding,
-        air
+        air,
+        wallrunning
     }
 
     public bool sliding;
+    public bool wallrunning;
 
     [Header("Jump Values")]
     [Tooltip("Determines the jump height of the player, along with impacts from physics (gravity, etc.)")]
@@ -165,7 +169,14 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void StateHandler()
     {
-        if(sliding)
+        // State - Wall Running
+        if (wallrunning)
+        {
+            state = MovementState.wallrunning;
+            desiredMoveSpeed = wallRunSpeed;
+        }
+        // State - Sliding
+        else if (sliding)
         {
             state = MovementState.sliding;
 
@@ -243,7 +254,7 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
 
         // gravity off while on slope
-        rb.useGravity = !OnSlope();
+        if(!wallrunning) rb.useGravity = !OnSlope();
     }
 
     /// <summary>

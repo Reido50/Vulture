@@ -116,4 +116,40 @@ public class InputManager : MonoBehaviour
     {
         return input.Player.Reload.triggered && input.Player.Reload.ReadValue<float>() > 0;
     }
+
+    public bool PlayerIsHoldingForward()
+    {
+        if (GetPlayerMovement().y > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool PlayerIsHoldingLeft()
+    {
+        if (GetPlayerMovement().x < 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool PlayerIsHoldingRight()
+    {
+        if (GetPlayerMovement().x > 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

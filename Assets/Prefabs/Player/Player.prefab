@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 156055054104149347}
   m_LocalRotation: {x: 0.30769867, y: 0.11834867, z: -0.038604617, w: 0.9433053}
-  m_LocalPosition: {x: 0, y: 1.0000001, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -386,6 +386,7 @@ GameObject:
   - component: {fileID: 3996015534107573757}
   - component: {fileID: 2507767414141485889}
   - component: {fileID: 598990983705041935}
+  - component: {fileID: 3063529463560417964}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -456,10 +457,12 @@ MonoBehaviour:
   walkSpeed: 7
   sprintSpeed: 11
   slideSpeed: 30
+  wallRunSpeed: 12
   groundDrag: 5
   instantSpeedChangeThreshold: 8
   state: 0
   sliding: 0
+  wallrunning: 0
   jumpForce: 14
   jumpCooldown: 0.25
   airMultiplier: 0.4
@@ -531,3 +534,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxHealth: 100
   _currentHealth: 100
+--- !u!114 &3063529463560417964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7901662907699074902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 101eb878268919b41889edd733d9cba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallRunLayer:
+    serializedVersion: 2
+    m_Bits: 8192
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  wallRunForce: 200
+  wallJumpUpForce: 15
+  wallJumpSideForce: 25
+  maxWallRunTime: 3
+  wallRunCooldown: 0.5
+  wallCheckDistance: 1.5
+  wallRunLookAngle: 90
+  minJumpHeight: 2
+  useGravity: 1
+  gravityCounterForce: 25
+  showRaycastsInScene: 1
+  showTextBox: 0
+  debugText: {fileID: 0}
