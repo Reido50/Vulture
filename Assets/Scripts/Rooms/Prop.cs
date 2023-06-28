@@ -74,7 +74,7 @@ public class Prop : MonoBehaviour
     {
         if (collision.transform.GetComponent<EnemyHealth>() && _body.velocity.sqrMagnitude >= _damageSpeed)
         {
-            collision.transform.GetComponent<EnemyHealth>().TakeDamage(_body.velocity.sqrMagnitude - _damageSpeed);
+            collision.transform.GetComponent<EnemyHealth>().TakeDamage(Mathf.Ceil(_body.velocity.sqrMagnitude - _damageSpeed));
         }
     }
 

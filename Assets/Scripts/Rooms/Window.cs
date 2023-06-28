@@ -68,7 +68,7 @@ public class Window : MonoBehaviour
         {
             _broken = false;
 
-            GameManager._instance.ToggleGravity(false);
+            GameManager.instance.ToggleGravity(false);
 
             if (_lockedMaterial)
             {

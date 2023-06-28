@@ -337,7 +337,7 @@ public class Room : MonoBehaviour
     {
         _depressurized = true;
 
-        GameManager._instance.ToggleGravity(true);
+        GameManager.instance.ToggleGravity(true);
     }
 
     /// <summary>

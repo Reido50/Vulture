@@ -12,9 +12,9 @@ public class PlayerHealth : Health
     {
         base.Die();
 
-        if (GameManager._instance)
+        if (GameManager.instance)
         {
-            GameManager._instance.LoseGame();
+            GameManager.instance.LoseGame();
         }
     }
 

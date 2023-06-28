@@ -166,9 +166,13 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Continues the game after unpausing
+    /// </summary>
     public void Continue()
     {
         ToggleOnScreenUI(UIType.Game);
+        GameManager.instance.Unpause();
     }
 
 }

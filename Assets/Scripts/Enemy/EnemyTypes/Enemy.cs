@@ -183,9 +183,9 @@ public class Enemy : MonoBehaviour
     protected virtual void Start()
     {
         // Grabs player reference AFTER it's set in GameManager
-        if (GameManager._instance)
+        if (GameManager.instance)
         {
-            _playerRef = GameManager._instance.GetPlayerReference();
+            _playerRef = GameManager.instance.GetPlayerReference();
         }
     }
 

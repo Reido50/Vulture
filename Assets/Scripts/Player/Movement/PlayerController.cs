@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -92,10 +93,13 @@ public class PlayerController : MonoBehaviour
     private InputManager input;
     // Reference for the camera transform (used in calculating player direction)
     private Transform cameraTransform;
+    // Reference to this players virtual camera
+    private CinemachineVirtualCamera vCam;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        vCam = GetComponentInChildren<CinemachineVirtualCamera>();
         cameraTransform = Camera.main.transform;
     }
 
@@ -348,5 +352,22 @@ public class PlayerController : MonoBehaviour
         }
 
         moveSpeed = desiredMoveSpeed;
+    }
+
+    /// <summary>
+    /// Toggles the pausing of the game
+    /// </summary>
+    public void PauseGame()
+    {
+        if (GameManager.instance.TogglePause())
+        {
+            Cursor.lockState = CursorLockMode.None;
+            vCam.enabled = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            vCam.enabled = true;
+        }
     }
 }

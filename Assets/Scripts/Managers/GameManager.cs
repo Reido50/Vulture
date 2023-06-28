@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     #region Variables
 
     // Reference to the singleton instance
-    public static GameManager _instance;
+    public static GameManager instance;
 
     // Reference to the player transform
     private Transform _playerTransform;
@@ -29,9 +29,9 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (_instance == null)
+        if (instance == null)
         {
-            _instance = this;
+            instance = this;
 
             // Initial player grab (can be changed later for a more logical approach)
             _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
@@ -81,21 +81,34 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Goes through the proper channels to unpause the game
+    /// </summary>
+    public void Unpause()
+    {
+        _playerTransform.GetComponent<PlayerController>().PauseGame();
+    }
+
+    /// <summary>
     /// Toggles the pause menu on and off
     /// </summary>
-    public void TogglePause()
+    public bool TogglePause()
     {
         _isPaused = !_isPaused;
 
         Time.timeScale = _isPaused ? 0 : 1;
 
         UIManager.instance.ToggleOnScreenUI(_isPaused ? UIManager.UIType.Pause : UIManager.UIType.Game);
+
+        return _isPaused;
     }
 
+    /// <summary>
+    /// Handles the losing of the game
+    /// </summary>
     public void LoseGame()
     {
-        _isPaused = true;
-        Time.timeScale = 0;
+        Unpause();
+
         UIManager.instance.ToggleOnScreenUI(UIManager.UIType.End);
     }
 

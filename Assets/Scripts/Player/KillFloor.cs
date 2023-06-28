@@ -9,6 +9,6 @@ public class KillFloor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        GameManager._instance.GetPlayerReference().position = respawnPoint.position;
+        GameManager.instance.GetPlayerReference().position = respawnPoint.position;
     }
 }

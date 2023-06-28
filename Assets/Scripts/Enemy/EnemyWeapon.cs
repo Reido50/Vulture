@@ -36,7 +36,7 @@ public class EnemyWeapon : MonoBehaviour
     protected virtual void Start()
     {
         // Player reference needed for aiming matters, can be changed later if needed
-        _playerReference = GameManager._instance.GetPlayerReference();
+        _playerReference = GameManager.instance.GetPlayerReference();
         _currentDelay = _attackDelay;
     }
 
