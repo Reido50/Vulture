@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     // Is the game currently paused?
     private bool _isPaused = false;
 
-    private bool _isLowGrav = false;
+    public bool _isLowGrav = false;
 
     private int _brokenCount = 0;
 

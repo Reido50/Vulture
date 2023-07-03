@@ -42,7 +42,7 @@ public class Bullet : MonoBehaviour
         }
         else if (collision.transform.GetComponentInParent<Health>())
         {
-            collision.transform.GetComponent<Health>().TakeDamage(_damage, 1);
+            collision.transform.GetComponentInParent<Health>().TakeDamage(_damage, 1);
         }
 
         Destroy(this.gameObject);

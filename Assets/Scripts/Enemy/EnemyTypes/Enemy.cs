@@ -15,6 +15,14 @@ public class Enemy : MonoBehaviour
         Covering
     }
 
+    [Header("References")]
+
+    [Tooltip("Reference to this enemy's normal mesh")]
+    public GameObject _mesh;
+
+    [Tooltip("Reference to this enemy's ragdoll GO")]
+    public GameObject _ragdoll;
+
     [Header("Detection Debug")]
 
     [Tooltip("The current state of the enemy")]
@@ -148,7 +156,9 @@ public class Enemy : MonoBehaviour
                 if (_currentRoom.GetWindow() != null)
                 {
                     Vector3 targetDir = _currentRoom.GetWindow().transform.position - transform.position;
-                    _body.velocity = targetDir * _pullSpeed * Time.deltaTime;
+                    _body.velocity = targetDir * _pullSpeed * 50 * Time.deltaTime;
+
+                    Ragdollize("Sucked");
                 }
 
                 _mutable = false;
@@ -364,6 +374,29 @@ public class Enemy : MonoBehaviour
     public EnemyStates GetState()
     {
         return _state;
+    }
+
+    public void Ragdollize(string layer = "")
+    {
+        _mesh.SetActive(false);
+        _ragdoll.SetActive(true);
+
+        _ragdoll.transform.parent = this.transform.parent;
+
+        _ragdoll.GetComponentInChildren<SkinnedMeshRenderer>().updateWhenOffscreen = true;
+
+        if (GameManager.instance._isLowGrav)
+        {
+            foreach (Rigidbody body in _ragdoll.GetComponentsInChildren<Rigidbody>())
+            {
+                body.useGravity = false;
+
+                if (layer != "")
+                {
+                    body.gameObject.layer = LayerMask.NameToLayer(layer);
+                }
+            }
+        }
     }
 
     #endregion

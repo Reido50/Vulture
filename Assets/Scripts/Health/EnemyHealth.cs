@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyHealth : Health
 {
@@ -42,6 +43,11 @@ public class EnemyHealth : Health
         base.Die();
 
         RoundManager._instance.RecordEnemyKill(_enemyType);
+
+        if (GetComponent<Enemy>()._ragdoll != null)
+        {
+            GetComponent<Enemy>().Ragdollize();
+        }
 
         Destroy(this.gameObject);
     }
