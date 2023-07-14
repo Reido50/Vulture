@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
             if (_brokenCount == 1)
             {
                 _isLowGrav = true;
-                OnLowGrav();
+                OnLowGrav?.Invoke();
             }
         }
         else
@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
             if (_brokenCount <= 0)
             {
                 _isLowGrav = false;
-                OnLowGrav();
+                OnLowGrav?.Invoke();
             }
         }
     }
