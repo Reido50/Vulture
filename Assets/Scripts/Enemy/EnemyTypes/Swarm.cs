@@ -125,8 +125,13 @@ public class Swarm : Enemy
         if (Physics.Raycast(transform.position, Vector3.down, out hit, _agent.height, _floorMask))
         {
             _grounded = true;
+
+            _anim.SetBool("isGrounded", _grounded);
+
             return;
         }
+
+        _anim.SetBool("isGrounded", _grounded);
 
         _grounded = false;
     }

@@ -84,6 +84,8 @@ public class Enemy : MonoBehaviour
 
     protected Rigidbody _body;
 
+    protected Animator _anim;
+
     // Reference to the room this enemy is within
     public Room _currentRoom;
 
@@ -176,6 +178,7 @@ public class Enemy : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
         _weapon = GetComponent<EnemyWeapon>();
         _body = GetComponent<Rigidbody>();
+        _anim = GetComponentInChildren<Animator>();
 
         _baseSpeed = _agent.speed;
 
