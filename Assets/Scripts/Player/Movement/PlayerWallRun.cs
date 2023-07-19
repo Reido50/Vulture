@@ -4,10 +4,6 @@ using UnityEngine;
 public class PlayerWallRun : MonoBehaviour
 {
     [Header("Wall Run Values")]
-    [Tooltip("Layermask for specifying what should be wall-runnable")]
-    [SerializeField] private LayerMask wallRunLayer;
-    [Tooltip("Layermask for specifying the ground")]
-    [SerializeField] private LayerMask groundLayer;
     [Tooltip("The amount of force that's pushing the player when wall running")]
     [SerializeField] private float wallRunForce;
     [Tooltip("Amount of vertical force when jumping off of a wall run")]
@@ -40,10 +36,6 @@ public class PlayerWallRun : MonoBehaviour
     [Header("Debug Values")]
     [Tooltip("Enable to show raycasts from the player used for calculating when the wall run should end - blue = left, red = right")]
     [SerializeField] private bool showRaycastsInScene;
-    [Tooltip("Enables use of a textbox to show when the player is wallrunning - need to add textbox below")]
-    [SerializeField] private bool showTextBox;
-    [Tooltip("Drag in a TMPro textbox that will be set to 'wallrun' or blank based on state")]
-    [SerializeField] private TextMeshProUGUI debugText;
 
     // Bools
     // Checks if there's a runnable wall to the right of the player
@@ -105,21 +97,21 @@ public class PlayerWallRun : MonoBehaviour
         float adjustedAngle = wallRunLookAngle / 2;
         DebugWallRunRaycasts(adjustedAngle);
 
-        wallLeft = Physics.Raycast(transform.position, -cameraTransform.right, out leftWallHit, wallCheckDistance, wallRunLayer);
+        wallLeft = Physics.Raycast(transform.position, -cameraTransform.right, out leftWallHit, wallCheckDistance, controller.wallLayer);
 
         if (controller.wallrunning)
         {
-            bool wallLeftForward = Physics.Raycast(transform.position, Quaternion.AngleAxis(adjustedAngle, Vector3.up) * -cameraTransform.right, wallCheckDistance, wallRunLayer);
-            bool wallLeftBackward = Physics.Raycast(transform.position, Quaternion.AngleAxis(-adjustedAngle, Vector3.up) * -cameraTransform.right, wallCheckDistance, wallRunLayer);
+            bool wallLeftForward = Physics.Raycast(transform.position, Quaternion.AngleAxis(adjustedAngle, Vector3.up) * -cameraTransform.right, wallCheckDistance, controller.wallLayer);
+            bool wallLeftBackward = Physics.Raycast(transform.position, Quaternion.AngleAxis(-adjustedAngle, Vector3.up) * -cameraTransform.right, wallCheckDistance, controller.wallLayer);
             wallLeft = wallLeft || wallLeftForward || wallLeftBackward;
         }
 
-        wallRight = Physics.Raycast(transform.position, cameraTransform.right, out rightWallHit, wallCheckDistance, wallRunLayer);
+        wallRight = Physics.Raycast(transform.position, cameraTransform.right, out rightWallHit, wallCheckDistance, controller.wallLayer);
 
         if (controller.wallrunning)
         {
-            bool wallRightForward = Physics.Raycast(transform.position, Quaternion.AngleAxis(-adjustedAngle, Vector3.up) * cameraTransform.right, wallCheckDistance, wallRunLayer);
-            bool wallRightBackward = Physics.Raycast(transform.position, Quaternion.AngleAxis(adjustedAngle, Vector3.up) * cameraTransform.right, wallCheckDistance, wallRunLayer);
+            bool wallRightForward = Physics.Raycast(transform.position, Quaternion.AngleAxis(-adjustedAngle, Vector3.up) * cameraTransform.right, wallCheckDistance, controller.wallLayer);
+            bool wallRightBackward = Physics.Raycast(transform.position, Quaternion.AngleAxis(adjustedAngle, Vector3.up) * cameraTransform.right, wallCheckDistance, controller.wallLayer);
             wallRight = wallRight || wallRightForward || wallRightBackward;
         }
     }
@@ -155,7 +147,7 @@ public class PlayerWallRun : MonoBehaviour
     /// <returns>Returns if the player is grounded or not</returns>
     private bool AboveGround()
     {
-        return !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, groundLayer);
+        return !Physics.Raycast(transform.position, Vector3.down, minJumpHeight, controller.groundLayer);
     }   
     
     /// <summary>
@@ -185,7 +177,7 @@ public class PlayerWallRun : MonoBehaviour
 
 
             // wall jump
-            if(input.PlayerIsJumping())
+            if(input.PlayerStartedJumping())
             {
                 WallJump();
             }
@@ -227,9 +219,6 @@ public class PlayerWallRun : MonoBehaviour
         wallRunTimer = maxWallRunTime;
 
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-        if(showTextBox && debugText) debugText.text = "wallrunning";
-
     }
 
     /// <summary>
@@ -270,7 +259,6 @@ public class PlayerWallRun : MonoBehaviour
     private void StopWallRun()
     {
         controller.wallrunning = false;
-        if (showTextBox) debugText.text = "";
     }
 
     /// <summary>

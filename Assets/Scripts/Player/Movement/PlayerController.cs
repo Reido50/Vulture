@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float slideSpeed;
     [Tooltip("Wall run speed for the player")]
     [SerializeField] private float wallRunSpeed;
+    [Tooltip("Climbing speed for the player")]
+    [SerializeField] private float climbSpeed;
 
     [Tooltip("Intended speed for the player to be moving at")]
     private float desiredMoveSpeed;
@@ -38,11 +41,13 @@ public class PlayerController : MonoBehaviour
         crouching,
         sliding,
         air,
-        wallrunning
+        wallrunning,
+        climbing
     }
 
     public bool sliding;
     public bool wallrunning;
+    public bool climbing;
 
     [Header("Jump Values")]
     [Tooltip("Determines the jump height of the player, along with impacts from physics (gravity, etc.)")]
@@ -65,10 +70,8 @@ public class PlayerController : MonoBehaviour
     [Header("Ground Check")]
     [Tooltip("The height of the player")]
     [SerializeField] private float playerHeight;
-    [Tooltip("Layermask for checking for the ground, which is used for deciding when certain player actions can begin")]
-    [SerializeField] private LayerMask groundLayer;
     [Tooltip("(Do not touch this) General boolean for checking if the player is on the ground")]
-    [SerializeField] private bool grounded;
+    public bool grounded;
 
     [Header("Slope Handling")]
     [Tooltip("Maximum angle for slopes before player can no longer walk up them")]
@@ -77,6 +80,18 @@ public class PlayerController : MonoBehaviour
     private RaycastHit slopeHit;
     // Handling for when the player jumps when on a slope
     private bool exitingSlope;
+
+    [Header("Layer References")]
+    [Tooltip("Layermask for checking for the ground, which is used for deciding when certain player actions can begin")]
+    public LayerMask groundLayer;
+    [Tooltip("Layermask for walls, used in wall run and climbing")]
+    public LayerMask wallLayer;
+
+    [Header("Debug")]
+    [Tooltip("Drag in a TMPro textbox that will be set to the current state (one can be found in the Canvas in the GamePackage prefab labeled 'PlayerStateText')")]
+    [SerializeField] private TextMeshProUGUI debugText;
+    [Tooltip("Enable the debug textbox displaying the player state")]
+    [SerializeField] private bool enableDebugText;
 
     // Global variables for storing player information
     // Global variable assigned by players input for calculating movement direction
@@ -95,12 +110,15 @@ public class PlayerController : MonoBehaviour
     private Transform cameraTransform;
     // Reference to this players virtual camera
     private CinemachineVirtualCamera vCam;
+    // Reference to the playerClimb script
+    private PlayerClimb climb;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         vCam = GetComponentInChildren<CinemachineVirtualCamera>();
         cameraTransform = Camera.main.transform;
+        climb = GetComponent<PlayerClimb>();
     }
 
     private void Start()
@@ -118,6 +136,13 @@ public class PlayerController : MonoBehaviour
     {
         // Raycast for checking if the player is on the ground
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, groundLayer);
+
+        // Include being above a wall in the raycast
+        bool groundedOnWall = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.3f, wallLayer);
+        if (groundedOnWall)
+        {
+            grounded = true;
+        }
 
         UpdateInput();
         SpeedControl();
@@ -173,8 +198,14 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void StateHandler()
     {
+        // State - Climbing
+        if(climbing)
+        {
+            state = MovementState.climbing;
+            desiredMoveSpeed = climbSpeed;
+        }
         // State - Wall Running
-        if (wallrunning)
+        else if (wallrunning)
         {
             state = MovementState.wallrunning;
             desiredMoveSpeed = wallRunSpeed;
@@ -228,6 +259,11 @@ public class PlayerController : MonoBehaviour
         }
 
         lastDesiredMoveSpeed = desiredMoveSpeed;
+
+        if (debugText && enableDebugText)
+        {
+            debugText.text = state.ToString();
+        }
     }
 
     /// <summary>
@@ -236,6 +272,8 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void MovePlayer()
     {
+        if (climb.exitingWall) return;
+
         // calculate movement direction
         moveDirection = cameraTransform.forward * verticalInput + cameraTransform.right * horizontalInput;
         moveDirection.y = 0f;

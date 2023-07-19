@@ -1209,6 +1209,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 769757754628389096, guid: 5147b79648ad52a4fbbd46a89611a5d0,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerStateText
+      objectReference: {fileID: 0}
     - target: {fileID: 2815920645035889806, guid: 5147b79648ad52a4fbbd46a89611a5d0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2190,9 +2195,14 @@ PrefabInstance:
       propertyPath: showTextBox
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3063529463560417964, guid: ae00b1e585982514fae9399610aa5f7d,
+    - target: {fileID: 4471016216214170644, guid: ae00b1e585982514fae9399610aa5f7d,
         type: 3}
-      propertyPath: showRaycastsInScene
+      propertyPath: debugText
+      value: 
+      objectReference: {fileID: 345776517}
+    - target: {fileID: 4471016216214170644, guid: ae00b1e585982514fae9399610aa5f7d,
+        type: 3}
+      propertyPath: enableDebugText
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6909681823605554824, guid: ae00b1e585982514fae9399610aa5f7d,
