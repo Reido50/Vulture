@@ -1533,9 +1533,9 @@ MonoBehaviour:
   _colliderDamage: 5
   _attackDelay: 1
   _colliderOffset: 1
-  _bulletSpeed: 20
-  _aimPercentage: 0.8
-  _maxMissDistance: 0.2
+  _bulletSpeed: 30
+  _aimPercentage: 0.9
+  _maxMissDistance: 0.1
 --- !u!1 &3115551480068981646
 GameObject:
   m_ObjectHideFlags: 0
