@@ -408,4 +408,14 @@ public class PlayerController : MonoBehaviour
             vCam.enabled = true;
         }
     }
+
+    public void ChangeSensitivity(float settingsValue)
+    {
+
+    }
+
+    public void ChangeAimSensitivity(float settingsValue)
+    {
+
+    }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -12,7 +13,8 @@ public class UIManager : MonoBehaviour
         Game,
         Pause,
         End,
-        Shop
+        Shop,
+        Settings
     }
 
     // The current UI in effect
@@ -25,6 +27,9 @@ public class UIManager : MonoBehaviour
 
     [Tooltip("The reference to the pause UI parent")]
     [SerializeField] private GameObject _pauseUIParent;
+
+    [Tooltip("The reference to the settings UI parent")]
+    [SerializeField] private GameObject _settingsUIParent;
 
     [Header("Game References")]
 
@@ -51,6 +56,20 @@ public class UIManager : MonoBehaviour
     [Tooltip("The reference to the settings button")]
     [SerializeField] private GameObject _settingsButton;
 
+    [Header("Settings References")]
+
+
+    [Tooltip("The reference to the sensitivity slider")]
+    [SerializeField] private Slider _sensitivitySlider;
+
+    [Tooltip("The reference to the aim sensitivity slider")]
+    [SerializeField] private Slider _aimSensitivitySlider;
+
+    // General References
+    // Reference to the player gameobject
+    private PlayerController _controller;
+
+
     void Awake()
     {
         if (instance == null)
@@ -60,6 +79,13 @@ public class UIManager : MonoBehaviour
         else
         {
             Destroy(this.gameObject);
+        }
+
+        _controller = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+
+        if (_controller == null)
+        {
+            Debug.LogWarning("Missing a player in the scene!");
         }
     }
 
@@ -140,6 +166,7 @@ public class UIManager : MonoBehaviour
         // Toggle off all prior UI
         _gameUIParent.SetActive(false);
         _pauseUIParent.SetActive(false);
+        _settingsUIParent.SetActive(false);
 
         _currentUI = newType;
 
@@ -153,6 +180,10 @@ public class UIManager : MonoBehaviour
                 _continueButton.SetActive(true);
                 _settingsButton.SetActive(true);
                 _pauseUIParent.SetActive(true);
+                break;
+
+            case UIType.Settings:
+                _settingsUIParent.SetActive(true);
                 break;
 
             case UIType.End:
@@ -173,6 +204,29 @@ public class UIManager : MonoBehaviour
     {
         ToggleOnScreenUI(UIType.Game);
         GameManager.instance.Unpause();
+    }
+
+    /// <summary>
+    /// Opens the settings menu from the pause screen
+    /// </summary>
+    public void Settings()
+    {
+        ToggleOnScreenUI(UIType.Settings);
+    }
+
+    public void ReturnToPause()
+    {
+        ToggleOnScreenUI(UIType.Pause);
+    }
+
+    public void SensitivitySliderInput()
+    {
+        _controller.ChangeSensitivity(_sensitivitySlider.value);
+    }
+
+    public void AimSensitivitySliderInput()
+    {
+        _controller.ChangeSensitivity(_aimSensitivitySlider.value);
     }
 
 }
